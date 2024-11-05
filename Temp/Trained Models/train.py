@@ -18,7 +18,7 @@ crop_to_id = {
 }
 
 # Directory containing the CSV files
-data_directory = 'Temp/Trained Models/wfp_food_prices_ind.csv'  # Replace with your data directory path
+data_directory = 'Temp/Dataset'  # Replace with your data directory path
 
 # Define the sequence length for the LSTM model
 sequence_length = 100  # Set this to the desired sequence length
@@ -57,7 +57,7 @@ def build_multi_crop_lstm_model(input_shape):
     return model
 
 # Load data from the combined CSV file
-combined_file_path = os.path.join(data_directory, "Temp/Trained Models/wfp_food_prices_ind.csv")
+combined_file_path = os.path.join(data_directory, "Temp/Dataset/wfp_food_prices_ind.csv")
 combined_df = pd.read_csv(combined_file_path)
 
 # Initialize dictionaries to store models and scalers for each crop
@@ -95,7 +95,7 @@ def predict_future_prices(crop_name, sequence_length, future_steps):
     scaler = scalers[crop_name]
 
     # Load the crop's data from CSV
-    crop_df = pd.read_csv(os.path.join(data_directory, "Temp/Trained Models/wfp_food_prices_ind.csv"))
+    crop_df = pd.read_csv(os.path.join(data_directory, "Temp/Dataset/wfp_food_prices_ind.csv"))
     # Preprocess data
     X, y, _ = preprocess_data_with_id(crop_df, sequence_length, crop_to_id[crop_name])
     
@@ -130,7 +130,7 @@ def evaluate_model(crop_name, sequence_length):
     scaler = scalers[crop_name]
 
     # Load the crop's data from CSV
-    crop_df = pd.read_csv(os.path.join(data_directory, "Temp/Trained Models/wfp_food_prices_ind.csv"))
+    crop_df = pd.read_csv(os.path.join(data_directory, "Temp/Dataset/wfp_food_prices_ind.csv"))
     # Preprocess data
     X, y, _ = preprocess_data_with_id(crop_df, sequence_length, crop_to_id[crop_name])
     
