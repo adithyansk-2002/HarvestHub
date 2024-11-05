@@ -24,7 +24,7 @@ data_directory = 'data'  # Replace with your data directory path
 sequence_length = 100  # Set this to the desired sequence length
 
 def preprocess_data_with_id(data, sequence_length, crop_id):
-    """Preprocess data by scaling and creating sequences with crop identifiers."""
+    #Preprocess data by scaling and creating sequences with crop identifiers.
     # Scale the price data to the range (0, 1)
     scaler = MinMaxScaler(feature_range=(0, 1))
     data_scaled = scaler.fit_transform(data[['price']])
@@ -45,7 +45,7 @@ def preprocess_data_with_id(data, sequence_length, crop_id):
     return np.array(X), np.array(y), scaler
 
 def build_multi_crop_lstm_model(input_shape):
-    """Build an LSTM model with additional feature for crop identifier."""
+    # Build an LSTM model with additional feature for crop identifier.
     model = Sequential([
         LSTM(units=50, return_sequences=True, input_shape=input_shape),  # First LSTM layer
         Dropout(0.2),  # Dropout for regularization
@@ -90,7 +90,7 @@ for crop_name, crop_id in crop_to_id.items():
     print(f"Model for {crop_name} saved successfully.")
 
 def predict_future_prices(crop_name, sequence_length, future_steps):
-    """Predict future prices for a specific crop."""
+    # Predict future prices for a specific crop.
     model = models[crop_name]
     scaler = scalers[crop_name]
 
@@ -125,7 +125,7 @@ def predict_future_prices(crop_name, sequence_length, future_steps):
     plt.show()
 
 def evaluate_model(crop_name, sequence_length):
-    """Evaluate the model's accuracy using test data."""
+    # Evaluate the model's accuracy using test data.
     model = models[crop_name]
     scaler = scalers[crop_name]
 
