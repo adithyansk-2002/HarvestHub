@@ -8,6 +8,9 @@
     <meta content="" name="keywords">
     <meta content="" name="description">
 
+    <!-- Manifest -->
+    <link rel="manifest" href="manifest.json">
+
     <!-- Favicon -->
     <link href="img/favicon.ico" rel="icon">
 
@@ -725,7 +728,16 @@
     <script src="lib/waypoints/waypoints.min.js"></script>
     <script src="lib/owlcarousel/owl.carousel.min.js"></script>
 
-    <!-- Template Javascript -->
+    <!-- Service Worker -->
+    <script>
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("js/service-worker.js").then(() => {
+                console.log("Service Worker Registered");
+            });
+        }
+    </script>
+
+    <!-- Javascript -->
     <script src="js/main.js"></script>
 </body>
 
