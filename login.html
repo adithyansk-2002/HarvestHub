@@ -46,17 +46,19 @@
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
+        background-attachment: fixed; /* Keep background fixed while scrolling */
         display: flex;
         flex-direction: column; /* Change to column to stack elements vertically */
         justify-content: flex-start; /* Align items to the start of the main axis */
         align-items: center;
-        height: 100vh;
+        min-height: 100vh; /* Change height to min-height */
         margin: 0;
         position: relative; /* Ensure the body is positioned for pseudo-element */
+        overflow-x: hidden; /* Prevent horizontal scrolling */
       }
       body::before {
         content: "";
-        position: absolute;
+        position: fixed; /* Change to fixed to keep overlay in place */
         top: 0;
         left: 0;
         right: 0;
