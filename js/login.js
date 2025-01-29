@@ -1,4 +1,5 @@
 import { auth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from './firebase.js';
+const provider = new GoogleAuthProvider();
 
 const loginEmail = document.getElementById("login-email");
 const loginPassword = document.getElementById("login-password");
@@ -41,28 +42,15 @@ loginbtn.addEventListener('click', (e) => {
 });
 
 googleButton.addEventListener('click', (e) => {
-
+    e.preventDefault();
     signInWithPopup(auth, provider)
         .then((result) => {
-            // This gives you a Google Access Token. You can use it to access the Google API.
-            const credential = GoogleAuthProvider.credentialFromResult(result);
-            const token = credential.accessToken;
-            // The signed-in user info.
             const user = result.user;
             // Wait for 1 second (1000 milliseconds) before redirecting to index.html
             setTimeout(() => {
                 window.location.href = 'dashboard.html';
             }, 1000);
-
-        }).catch((error) => {
-            // Handle Errors here.
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            alert(errorMessage);
-            // The email of the user's account used.
-            const email = error.customData.email;
-            // The AuthCredential type that was used.
-            const credential = GoogleAuthProvider.credentialFromError(error);
-            // ...
-        });
+        })
+        .catch(handleError);
 });
+
