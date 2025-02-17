@@ -8,6 +8,9 @@
     <meta content="" name="keywords">
     <meta content="" name="description">
 
+    <!-- Manifest -->
+    <link rel="manifest" href="manifest.json">
+
     <!-- Favicon -->
     <link href="img/favicon.ico" rel="icon">
 
@@ -70,8 +73,8 @@
                         </div>
                     </div>
                     <a href="contact.html" class="nav-item nav-link">Contact</a>
+                    <a href="login.html" class="btn btn-primary rounded-0 py-4 px-lg-5 mt-3 mt-lg-0">Sign In</a>
                 </div>
-                <a href="login.html" class="btn btn-primary rounded-0 py-4 px-lg-5 d-none d-lg-block">Sign In<i class="fa fa-arrow-right ms-3"></i></a>
             </div>
         </nav>
         <!-- Navbar End -->
@@ -88,8 +91,10 @@
                                 <div class="col-10 col-lg-8">
                                     <h1 class="display-3 text-white animated slideInDown mb-4">Start Bidding Today!</h1>
                                     <p class="fs-5 fw-medium text-white mb-4 pb-2">Start your bidding today with our easy to use bidding app specifically made for farmers and buyers.</p>
-                                    <a href="" class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft">Search A Buyer</a>
-                                    <a href="" class="btn btn-secondary py-md-3 px-md-5 animated slideInRight">Find A Farmer</a>
+                                    <div class="button-container">
+                                        <a href="buyers.html" class="btn btn-primary">Search A Buyer</a>
+                                        <a href="sellers.html" class="btn btn-secondary">Find A Farmer</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -103,8 +108,10 @@
                                 <div class="col-10 col-lg-8">
                                     <h1 class="display-3 text-white animated slideInDown mb-4">Start Bidding Today!</h1>
                                     <p class="fs-5 fw-medium text-white mb-4 pb-2">Start your bidding today with our easy to use bidding app specifically made for farmers and buyers.</p>
-                                    <a href="" class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft">Search A Buyer</a>
-                                    <a href="" class="btn btn-secondary py-md-3 px-md-5 animated slideInRight">Find A Farmer</a>
+                                    <div class="button-container">
+                                        <a href="buyers.html" class="btn btn-primary">Search A Buyer</a>
+                                        <a href="sellers.html" class="btn btn-secondary">Find A Farmer</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -159,58 +166,58 @@
                 <div class="row g-4">
                     <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.1s">
                         <a class="cat-item rounded p-4" href="">
-                            <i class="fa fa-3x fa-mail-bulk text-primary mb-4"></i>
-                            <h6 class="mb-3">Marketing</h6>
-                            <p class="mb-0">123 Vacancy</p>
+                            <!--<i class="fa fa-3x fa-mail-bulk text-primary mb-4"></i>-->
+                            <h6 class="mb-3">Rice</h6>
+                            <p class="mb-0">123 Sellers</p>
                         </a>
                     </div>
                     <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.3s">
                         <a class="cat-item rounded p-4" href="">
-                            <i class="fa fa-3x fa-headset text-primary mb-4"></i>
-                            <h6 class="mb-3">Customer Service</h6>
-                            <p class="mb-0">123 Vacancy</p>
+                            <!--<i class="fa fa-3x fa-headset text-primary mb-4"></i>-->
+                            <h6 class="mb-3">Tomatoes</h6>
+                            <p class="mb-0">123 Sellers</p>
                         </a>
                     </div>
                     <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.5s">
                         <a class="cat-item rounded p-4" href="">
-                            <i class="fa fa-3x fa-user-tie text-primary mb-4"></i>
-                            <h6 class="mb-3">Human Resource</h6>
-                            <p class="mb-0">123 Vacancy</p>
+                            <!--<i class="fa fa-3x fa-user-tie text-primary mb-4"></i>-->
+                            <h6 class="mb-3">Lentils</h6>
+                            <p class="mb-0">123 Sellers</p>
                         </a>
                     </div>
                     <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.7s">
                         <a class="cat-item rounded p-4" href="">
-                            <i class="fa fa-3x fa-tasks text-primary mb-4"></i>
-                            <h6 class="mb-3">Project Management</h6>
-                            <p class="mb-0">123 Vacancy</p>
+                            <!--<i class="fa fa-3x fa-tasks text-primary mb-4"></i>-->
+                            <h6 class="mb-3">Onions</h6>
+                            <p class="mb-0">123 Sellers</p>
                         </a>
                     </div>
                     <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.1s">
                         <a class="cat-item rounded p-4" href="">
-                            <i class="fa fa-3x fa-chart-line text-primary mb-4"></i>
-                            <h6 class="mb-3">Business Development</h6>
-                            <p class="mb-0">123 Vacancy</p>
+                            <!--<i class="fa fa-3x fa-chart-line text-primary mb-4"></i>-->
+                            <h6 class="mb-3">Potatoes</h6>
+                            <p class="mb-0">123 Sellers</p>
                         </a>
                     </div>
                     <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.3s">
                         <a class="cat-item rounded p-4" href="">
-                            <i class="fa fa-3x fa-hands-helping text-primary mb-4"></i>
-                            <h6 class="mb-3">Sales & Communication</h6>
-                            <p class="mb-0">123 Vacancy</p>
+                            <!--<i class="fa fa-3x fa-hands-helping text-primary mb-4"></i>-->
+                            <h6 class="mb-3">Chickpeas</h6>
+                            <p class="mb-0">123 Sellers</p>
                         </a>
                     </div>
                     <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.5s">
                         <a class="cat-item rounded p-4" href="">
-                            <i class="fa fa-3x fa-book-reader text-primary mb-4"></i>
-                            <h6 class="mb-3">Teaching & Education</h6>
-                            <p class="mb-0">123 Vacancy</p>
+                            <!--<i class="fa fa-3x fa-book-reader text-primary mb-4"></i>-->
+                            <h6 class="mb-3">Tea</h6>
+                            <p class="mb-0">123 Sellers</p>
                         </a>
                     </div>
                     <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.7s">
                         <a class="cat-item rounded p-4" href="">
-                            <i class="fa fa-3x fa-drafting-compass text-primary mb-4"></i>
-                            <h6 class="mb-3">Design & Creative</h6>
-                            <p class="mb-0">123 Vacancy</p>
+                            <!--<i class="fa fa-3x fa-drafting-compass text-primary mb-4"></i>-->
+                            <h6 class="mb-3">Sugar</h6>
+                            <p class="mb-0">123 Sellers</p>
                         </a>
                     </div>
                 </div>
@@ -654,7 +661,7 @@
                     <div class="col-lg-3 col-md-6">
                         <h5 class="text-white mb-4">Company</h5>
                         <a class="btn btn-link text-white-50" href="">About Us</a>
-                        <a class="btn btn-link text-white-50" href="">Contact Us</a>
+                        <a class="btn btn-link text-white-50" href="">Contact Us</a>    
                         <a class="btn btn-link text-white-50" href="">Our Services</a>
                         <a class="btn btn-link text-white-50" href="">Privacy Policy</a>
                         <a class="btn btn-link text-white-50" href="">Terms & Condition</a>
@@ -694,10 +701,7 @@
                     <div class="row">
                         <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
                             &copy; <a class="border-bottom" href="#">Your Site Name</a>, All Right Reserved. 
-							
-							<!--/*** This template is free as long as you keep the footer author’s credit link/attribution link/backlink. If you'd like to use the template without the footer author’s credit link/attribution link/backlink, you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". Thank you for your support. ***/-->
-							Designed By <a class="border-bottom" href="https://htmlcodex.com">HTML Codex</a>
-                        </div>
+						</div>
                         <div class="col-md-6 text-center text-md-end">
                             <div class="footer-menu">
                                 <a href="">Home</a>
@@ -725,7 +729,16 @@
     <script src="lib/waypoints/waypoints.min.js"></script>
     <script src="lib/owlcarousel/owl.carousel.min.js"></script>
 
-    <!-- Template Javascript -->
+    <!-- Service Worker -->
+    <script>
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("js/service-worker.js").then(() => {
+                console.log("Service Worker Registered");
+            });
+        }
+    </script>
+
+    <!-- Javascript -->
     <script src="js/main.js"></script>
 </body>
 

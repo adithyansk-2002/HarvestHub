@@ -1,6 +1,6 @@
 /********** Template CSS **********/
 :root {
-    --primary: #00B074;
+    /* --primary: #00b07500; */
     --secondary: #2B9BFF;
     --light: #EFFDF5;
     --dark: #2B3940;
@@ -218,9 +218,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #FFFFFF;
+    color: #ffffff00;
     background: transparent;
-    border: 1px solid #FFFFFF;
+    border: 1px solid #ffffff00;
     border-radius: 2px;
     font-size: 22px;
     transition: .5s;
@@ -390,4 +390,19 @@
     margin-right: 0;
     padding-right: 0;
     border-right: none;
+}
+
+@media (max-width: 576px) {
+    .button-container {
+        display: flex;
+        flex-direction: column; /* Stack buttons vertically */
+        align-items: center; /* Center align buttons */
+        gap: 20px; /* Increase space between buttons */
+        width: 100%; /* Ensure container takes full width */
+    }
+
+    .button-container .btn {
+        width: 80%; /* Make buttons take most of the container width */
+        max-width: 300px; /* Optional: limit the maximum width */
+    }
 }

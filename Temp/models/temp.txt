@@ -1,0 +1,1 @@
+This folder will contain the trained model that is created by executing train.py
