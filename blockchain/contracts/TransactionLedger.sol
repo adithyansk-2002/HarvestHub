@@ -1,39 +1,44 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.21;
 
-contract TransactionLedger {
+contract HarvestHubTransactions {
     struct Transaction {
-        uint256 transactionId;
-        address farmer;
-        address buyer;
-        uint256 amount;
-        uint256 timestamp;
+        address sender;
+        address receiver;
+        uint amount;
+        string cropName;
+        string message;
+        uint timestamp;
     }
 
-    uint256 public transactionCounter;
-    mapping(uint256 => Transaction) public transactions;
-    
-    event TransactionRecorded(uint256 transactionId, address farmer, address buyer, uint256 amount);
+    Transaction[] private transactions;
 
-    // 🔹 Initialize transaction counter in the constructor
-    constructor() {
-        transactionCounter = 0;
+    event Transfer(
+        address indexed sender,
+        address indexed receiver,
+        uint amount,
+        string cropName,
+        string message,
+        uint timestamp
+    );
+
+    function addTransaction(
+        address _receiver,
+        uint _amount,
+        string memory _cropName,
+        string memory _message
+    ) public {
+        transactions.push(
+            Transaction(msg.sender, _receiver, _amount, _cropName, _message, block.timestamp)
+        );
+        emit Transfer(msg.sender, _receiver, _amount, _cropName, _message, block.timestamp);
     }
 
-    // 🔹 Function to record a transaction with input validation
-    function recordTransaction(address _farmer, address _buyer, uint256 _amount) public {
-        require(_farmer != address(0), "Invalid farmer address");
-        require(_buyer != address(0), "Invalid buyer address");
-        require(_amount > 0, "Amount must be greater than zero");
-
-        transactionCounter++;
-        transactions[transactionCounter] = Transaction(transactionCounter, _farmer, _buyer, _amount, block.timestamp);
-        emit TransactionRecorded(transactionCounter, _farmer, _buyer, _amount);
+    function getAllTransactions() public view returns (Transaction[] memory) {
+        return transactions;
     }
 
-    // 🔹 Function to retrieve transaction details safely
-    function getTransaction(uint256 _transactionId) public view returns (Transaction memory) {
-        require(_transactionId > 0 && _transactionId <= transactionCounter, "Transaction ID does not exist");
-        return transactions[_transactionId];
+    function getTransactionCount() public view returns (uint) {
+        return transactions.length;
     }
 }
