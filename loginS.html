@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Log In/Sign Up</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="" name="keywords" />
+    <meta content="" name="description" />
+    <link rel="stylesheet" href="css/login_page.css" />
+
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon" />
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Inter:wght@700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Icon Font Stylesheet -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+
+    <!-- Libraries Stylesheet -->
+    <link href="lib/animate/animate.min.css" rel="stylesheet" />
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet" />
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Template Stylesheet -->
+    <link href="css/style.css" rel="stylesheet" />
+    <style>
+      body {
+        font-family: 'Poppins', sans-serif;
+        background-image: url("img/Image.webp");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8));
+        z-index: -1;
+      }
+      
+      .form {
+        background-color: rgba(255, 255, 255, 0.98);
+        padding: 30px;
+        border-radius: 16px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        width: 90%;
+        max-width: 400px;
+        margin: 0 auto;
+      }
+
+      .form h1 {
+        text-align: center;
+        margin-bottom: 25px;
+        color: #333;
+        font-size: 34px;
+        font-weight: 600;
+      }
+
+      .input-fields {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin: 0 0 20px 0;
+      }
+
+      .flex-column {
+        margin: 0;
+      }
+
+      .flex-column label {
+        display: block;
+        margin-bottom: 8px;
+        color: #555;
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      .inputForm {
+        position: relative;
+        margin: 0;
+        padding: 0;
+      }
+
+      .inputForm svg {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #666;
+        margin: 0;
+      }
+
+      .inputForm .input {
+        width: 100%;
+        padding: 12px 15px 12px 45px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        color: #333;
+        margin: 0;
+      }
+
+      .inputForm .input:focus {
+        border-color: #2e6f40;
+        box-shadow: 0 0 0 3px rgba(46, 111, 64, 0.1);
+        outline: none;
+      }
+
+      .button-submit {
+        width: 100%;
+        padding: 14px;
+        background-color: #2e6f40;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 10px;
+      }
+
+      .button-submit:hover {
+        background-color: #245332;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(46, 111, 64, 0.2);
+      }
+
+      .p {
+        text-align: center;
+        color: #666;
+        font-size: 14px;
+      }
+
+      .p .span {
+        color: #2e6f40;
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .p .span:hover {
+        text-decoration: underline;
+      }
+
+      .flex-row {
+        margin-top: 20px;
+      }
+
+      .btn.google {
+        width: 100%;
+        padding: 12px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 14px;
+        color: #333;
+      }
+
+      .btn.google:hover {
+        background-color: #f8f8f8;
+        border-color: #ccc;
+      }
+
+      nav.navbar {
+        width: 100%;
+        background-color: rgba(0, 0, 0, 0.352);
+        height: 60px;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      nav h1 {
+        font-size: 24px;
+        color: #2e6f40;
+        font-weight: 600;
+      }
+
+      .container-fluid {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        margin: 0;
+        min-height: calc(100vh - 60px);
+      }
+
+      .row {
+        margin: 0;
+        width: 100%;
+      }
+
+      #signup-link {
+        color: #2e6f40;
+        text-decoration: none;
+      }
+      #signup-link:hover {
+        color: #1e4b2b;
+      }
+
+      #googlebtn {
+        margin-top: 0;
+        background-color: rgba(176, 176, 176, 0.163);
+        border: rgba(128, 128, 128, 0.397) 1px solid;
+      }
+
+      @media (max-width: 576px) {
+        .form {
+          width: 95%;
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar Start -->
+    <nav
+      class="navbar navbar-expand-lg navbar-light shadow sticky-top p-0"
+    >
+      <a
+        href="index.html"
+        class="navbar-brand d-flex align-items-center text-center py-0 px-4 px-lg-5"
+      >
+        <h1 class="m-0 text-primary">HarvestHub</h1>
+      </a>
+      
+    </nav>
+    <!-- Navbar End -->
+
+    <div class="container-fluid d-flex justify-content-center align-items-center" style="margin: auto;">
+        <div class="row w-100 justify-content-center align-items-center">
+            <div class="col-12 col-sm-8 col-md-6 col-lg-4">
+                <form class="form mx-auto mx-sm-3">
+                    <h1 class="text-4xl" style="text-align: center">Log In</h1>
+                    <div class="input-fields">
+                      <div class="flex-column">
+                        <label>Email </label>
+                        <div class="inputForm">
+                          <svg
+                              height="20"
+                              viewBox="0 0 32 32"
+                              width="20"
+                              xmlns="http://www.w3.org/2000/svg"
+                          >
+                              <g id="Layer_3" data-name="Layer 3">
+                                  <path
+                                      d="m30.853 13.87a15 15 0 0 0 -29.729 4.082 15.1 15.1 0 0 0 12.876 12.918 15.6 15.6 0 0 0 2.016.13 14.85 14.85 0 0 0 7.715-2.145 1 1 0 1 0 -1.031-1.711 13.007 13.007 0 1 1 5.458-6.529 2.149 2.149 0 0 1 -4.158-.759v-10.856a1 1 0 0 0 -2 0v1.726a8 8 0 1 0 .2 10.325 4.135 4.135 0 0 0 7.83.274 15.2 15.2 0 0 0 .823-7.455zm-14.853 8.13a6 6 0 1 1 6-6 6.006 6.006 0 0 1 -6 6z"
+                                  ></path>
+                              </g>
+                          </svg>
+                          <input
+                              id="signup-email"
+                              type="text"
+                              class="input"
+                              placeholder="Enter your Email"
+                          />
+                      </div>
+                    </div>
+                    
+
+                    <div class="flex-column">
+                        <label>Password </label>
+                        <div class="inputForm">
+                          <svg
+                              height="20"
+                              viewBox="-64 0 512 512"
+                              width="20"
+                              xmlns="http://www.w3.org/2000/svg"
+                          >
+                              <path
+                                  d="m336 512h-288c-26.453125 0-48-21.523438-48-48v-224c0-26.476562 21.546875-48 48-48h288c26.453125 0 48 21.523438 48 48v224c0 26.476562-21.546875 48-48 48zm-288-288c-8.8125 0-16 7.167969-16 16v224c0 8.832031 7.1875 16 16 16h288c8.8125 0 16-7.167969 16-16v-224c0-8.832031-7.1875-16-16-16zm0 0"
+                              ></path>
+                              <path
+                                  d="m304 224c-8.832031 0-16-7.167969-16-16v-80c0-52.929688-43.070312-96-96-96s-96 43.070312-96 96v80c0 8.832031-7.167969 16-16 16s-16-7.167969-16-16v-80c0-70.59375 57.40625-128 128-128s128 57.40625 128 128v80c0 8.832031-7.167969 16-16 16zm0 0"
+                              ></path>
+                          </svg>
+                          <input
+                              id="signup-password"
+                              type="password"
+                              class="input"
+                              placeholder="Enter your Password"
+                          />
+                      </div>
+                    </div>
+                    </div>
+                    
+
+                    <button class="button-submit" id="signup-submit">Log In</button>
+                    <p class="p">
+                      Don't have an account? <a href="signupS.html" class="span" id="signup-link">Sign Up</a>
+                    </p>
+                    <div class="flex-row">
+                        <button class="btn google" id="googlebtn">
+                            <svg
+                                version="1.1"
+                                width="20"
+                                id="Layer_1"
+                                xmlns="http://www.w3.org/2000/svg"
+                                xmlns:xlink="http://www.w3.org/1999/xlink"
+                                x="0px"
+                                y="0px"
+                                viewBox="0 0 512 512"
+                                style="enable-background: new 0 0 512 512"
+                                xml:space="preserve"
+                            >
+                                <path
+                                    style="fill: #fbbb00"
+                                    d="M113.47,309.408L95.648,375.94l-65.139,1.378C11.042,341.211,0,299.9,0,256
+      c0-42.451,10.324-82.483,28.624-117.732h0.014l57.992,10.632l25.404,57.644c-5.317,15.501-8.215,32.141-8.215,49.456
+      C103.821,274.792,107.225,292.797,113.47,309.408z"
+                                ></path>
+                                <path
+                                    style="fill: #518ef8"
+                                    d="M507.527,208.176C510.467,223.662,512,239.655,512,256c0,18.328-1.927,36.206-5.598,53.451
+      c-12.462,58.683-45.025,109.925-90.134,146.187l-0.014-0.014l-73.044-3.727l-10.338-64.535
+      c29.932-17.554,53.324-45.025,65.646-77.911h-136.89V208.176h138.887L507.527,208.176L507.527,208.176z"
+                                ></path>
+                                <path
+                                    style="fill: #28b446"
+                                    d="M416.253,455.624l0.014,0.014C372.396,490.901,316.666,512,256,512
+      c-97.491,0-182.252-54.491-225.491-134.681l82.961-67.91c21.619,57.698,77.278,98.771,142.53,98.771
+      c28.047,0,54.323-7.582,76.87-20.818L416.253,455.624z"
+                                ></path>
+                                <path
+                                    style="fill: #f14336"
+                                    d="M419.404,58.936l-82.933,67.896c-23.335-14.586-50.919-23.012-80.471-23.012
+      c-66.729,0-123.429,42.957-143.965,102.724l-83.397-68.276h-0.014C71.23,56.123,157.06,0,256,0
+      C318.115,0,375.068,22.126,419.404,58.936z"
+                                ></path>
+                            </svg>
+
+                            Google
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/loginS.js"></script>
+  </body>
+</html>
