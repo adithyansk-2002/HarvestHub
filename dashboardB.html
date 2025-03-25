@@ -124,8 +124,17 @@
         </header>
         <section class="user-info">
             <h2>User Information</h2>
-            <p><strong>Name:</strong> <span id="user-name">John Doe</span></p>
-            <!--<p><strong>Email:</strong> johndoe123@example.com</p>-->
+            <form id="userDetailsForm">
+                <div>
+                    <label for="userName">Name:</label>
+                    <input type="text" id="userName" name="userName" required>
+                </div>
+                <div>
+                    <label for="userAddress">Address:</label>
+                    <input type="text" id="userAddress" name="userAddress" required>
+                </div>
+                <button type="submit">Save Details</button>
+            </form>
             <p><strong>Member Since:</strong> January 2023</p>
         </section>
         <section class="user-stats">
@@ -136,8 +145,24 @@
         </section>
     </div>
     <script type="module">
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // Initialize Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        const app = initializeApp(firebaseConfig);
+
         import { auth } from './js/firebase.js';
         import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
         
         // Check authentication state
         onAuthStateChanged(auth, (user) => {
@@ -170,6 +195,30 @@
             } catch (error) {
                 console.error("Error signing out:", error);
                 alert("Error signing out. Please try again.");
+            }
+        });
+
+        // Save user details to Firebase
+        document.getElementById('userDetailsForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const userName = document.getElementById('userName').value;
+            const userAddress = document.getElementById('userAddress').value;
+
+            if (auth.currentUser) {
+                const db = getDatabase();
+                const userRef = ref(db, 'users/' + auth.currentUser.uid);
+                try {
+                    await set(userRef, {
+                        name: userName,
+                        address: userAddress
+                    });
+                    alert('Details saved successfully!');
+                } catch (error) {
+                    console.error("Error saving details:", error);
+                    alert("Error saving details. Please try again.");
+                }
+            } else {
+                alert("User not authenticated.");
             }
         });
     </script>
