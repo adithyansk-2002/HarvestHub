@@ -32,7 +32,7 @@ signupSubmit.addEventListener("click", (e) => {
       // Signed up
       const user = userCredential.user;
       setTimeout(() => {
-        window.location.href = "dashboard.html";
+        window.location.href = "dashboardB.html";
       }, 1000);
       // ...
     })
@@ -50,7 +50,7 @@ googleButton.addEventListener('click', (e) => {
             const user = result.user;
             // Wait for 1 second (1000 milliseconds) before redirecting to index.html
             setTimeout(() => {
-                window.location.href = 'dashboard.html';
+                window.location.href = 'dashboardB.html';
             }, 1000);
         })
         .catch(handleError);

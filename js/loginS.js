@@ -28,7 +28,7 @@ loginbtn.addEventListener('click', (e) => {
 
             // Wait for 1 second (1000 milliseconds) before redirecting to index.html
             setTimeout(() => {
-                window.location.href = 'dashboard.html';
+                window.location.href = 'dashboardS.html';
             }, 1000);
 
         })
@@ -48,7 +48,7 @@ googleButton.addEventListener('click', (e) => {
             const user = result.user;
             // Wait for 1 second (1000 milliseconds) before redirecting to index.html
             setTimeout(() => {
-                window.location.href = 'dashboard.html';
+                window.location.href = 'dashboardS.html';
             }, 1000);
         })
         .catch(handleError);
