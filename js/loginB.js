@@ -1,9 +1,9 @@
 import { auth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from './firebase.js';
 const provider = new GoogleAuthProvider();
 
-const loginEmail = document.getElementById("login-email");
-const loginPassword = document.getElementById("login-password");
-const loginbtn = document.getElementById("login-btn");
+const loginEmail = document.getElementById("signup-email");
+const loginPassword = document.getElementById("signup-password");
+const loginbtn = document.getElementById("signup-submit");
 const googleButton = document.getElementById("googlebtn");
 
 
@@ -12,8 +12,8 @@ loginbtn.addEventListener('click', (e) => {
 
     e.preventDefault(); // Prevent form submission
 
-    var email = document.getElementById('login-email').value;
-    var password = document.getElementById('login-password').value;
+    var email = document.getElementById('signup-email').value;
+    var password = document.getElementById('signup-password').value;
 
     // Perform client-side validation
     if (!email || !password) {
