@@ -2,196 +2,286 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Dashboard</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="lib/animate/animate.min.css">
-    <link rel="stylesheet" href="lib/owlcarousel/assets/owl.carousel.min.css">
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/style.css">
+    <title>Buyer Dashboard - HarvestHub</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Inter:wght@700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="lib/animate/animate.min.css" rel="stylesheet">
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="css/style.css" rel="stylesheet">
+
     <style>
         body {
-            font-family: 'Heebo', sans-serif;
             background-color: #f8f9fa;
-            color: #343a40;
+            font-family: 'Heebo', sans-serif;
         }
-        header {
-            background-color: #3eaa4a;
+
+        .dashboard-container {
+            padding: 2rem 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .profile-pic {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: #2e6f40;
             color: white;
-            padding: 20px;
-            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin-right: 2rem;
         }
-        .container {
-            margin-top: 30px;
+
+        .profile-name {
+            flex-grow: 1;
         }
-        .user-info, .user-stats {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            margin-bottom: 20px;
+
+        .profile-name h2 {
+            color: #2e6f40;
+            margin-bottom: 0.5rem;
         }
-        h2 {
-            color: #3eaa4a;
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
         }
-        .nav-item.dropdown {
-            position: relative;
+
+        .info-item {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid #2e6f40;
         }
-        
-        .nav-item.dropdown .dropdown-menu {
-            display: none;
-            position: absolute;
-            right: 0;
-            top: 100%;
-            background-color: white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            z-index: 1000;
-        }
-        
-        .nav-item.dropdown.show .dropdown-menu {
+
+        .info-label {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
             display: block;
         }
-        
-        .btn-link {
+
+        .info-value {
             color: #333;
-            text-decoration: none;
-            padding: 0.5rem 1rem;
+            font-size: 1.1rem;
+            font-weight: 500;
         }
-        
-        .btn-link:hover {
+
+        .status-badge {
+            background: #e8f5e9;
             color: #2e6f40;
-        }
-        
-        .fa-user-circle {
-            font-size: 1.5rem;
-        }
-        
-        .dropdown-item {
             padding: 0.5rem 1rem;
-            color: #333;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
         }
-        
-        .dropdown-item:hover {
-            background-color: #f8f9fa;
-            color: #2e6f40;
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 1rem;
+            }
+            
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .profile-pic {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
         }
-        .user-info {
+
+        .loading-spinner {
+            text-align: center;
             padding: 20px;
-            margin: 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
         }
-        .info-item {
-            margin: 10px 0;
+
+        .profile-card:not(.loaded) .info-grid {
+            opacity: 0.6;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #2e6f40;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Hide spinner when data is loaded */
+        .profile-card.loaded .loading-spinner {
+            display: none;
         }
     </style>
 </head>
 <body>
-    <!-- Navbar Start -->
-<nav class="navbar navbar-expand-lg bg-white navbar-light shadow sticky-top p-0">
-    <a href="index.html" class="navbar-brand d-flex align-items-center text-center py-0 px-4 px-lg-5">
-        <h1 class="m-0 text-primary">HarvestHub</h1>
-    </a>
-    <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarCollapse">
-        <div class="navbar-nav ms-auto p-4 p-lg-0">
-            <a href="index.html" class="nav-item nav-link active">Home</a>
-            <a href="about.html" class="nav-item nav-link">About</a>
-            <div class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Services</a>
-                <div class="dropdown-menu rounded-0 m-0">
-                    <a href="sellers.html" class="dropdown-item">Find a Seller</a>
-                    <a href="buyers.html" class="dropdown-item">Find a Buyer</a>
+    <div class="container-xxl bg-white p-0">
+        <!-- Navbar Start -->
+        <nav class="navbar navbar-expand-lg bg-white navbar-light shadow sticky-top p-0">
+            <a href="index.html" class="navbar-brand d-flex align-items-center text-center py-0 px-4 px-lg-5">
+                <h1 class="m-0 text-primary">HarvestHub</h1>
+            </a>
+            <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <div class="navbar-nav ms-auto p-4 p-lg-0">
+                    <a href="index.html" class="nav-item nav-link">Home</a>
+                    <a href="about.html" class="nav-item nav-link">About</a>
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Services</a>
+                        <div class="dropdown-menu rounded-0 m-0">
+                            <a href="sellers.html" class="dropdown-item">Find a Seller</a>
+                            <a href="buyers.html" class="dropdown-item">Find a Buyer</a>
+                        </div>
+                    </div>
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
+                        <div class="dropdown-menu rounded-0 m-0">
+                            <a href="category.html" class="dropdown-item">Seller Category</a>
+                            <a href="testimonial.html" class="dropdown-item">Testimonial</a>
+                            <a href="404.html" class="dropdown-item">404</a>
+                        </div>
+                    </div>
+                    <a href="contact.html" class="nav-item nav-link">Contact</a>
+                    <div class="nav-item dropdown">
+                        <a href="#" class="btn btn-primary rounded-0 py-4 px-lg-5 d-none d-lg-block dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="fas fa-user me-2"></i>User
+                        </a>
+                        <div class="dropdown-menu rounded-0 m-0">
+                            <button id="signOutBtn" class="dropdown-item">Sign Out</button>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
-                <div class="dropdown-menu rounded-0 m-0">
-                    <a href="category.html" class="dropdown-item">Seller Category</a>
-                    <a href="testimonial.html" class="dropdown-item">Testimonial</a>
-                    <a href="404.html" class="dropdown-item">404</a>
+        </nav>
+        <!-- Navbar End -->
+
+        <div class="dashboard-container">
+            <div class="profile-card">
+                <div class="profile-header">
+                    <div class="profile-pic">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="profile-name">
+                        <h2 id="user-name">Loading...</h2>
+                        <span class="status-badge">Verified Buyer</span>
+                    </div>
                 </div>
-            </div>
-            <a href="contact.html" class="nav-item nav-link">Contact</a>
-            <div class="nav-item dropdown" id="authDropdown">
-                <a id="authButton" href="loginB.html" class="btn btn-primary rounded-0 py-4 px-lg-5 mt-3 mt-lg-0">Sign In</a>
-                <div class="dropdown-menu dropdown-menu-end rounded-0 m-0">
-                    <a href="#" class="dropdown-item" id="signOutBtn">Sign Out</a>
+
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                    <p>Loading your information...</p>
+                </div>
+
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Email Address</span>
+                        <div class="info-value" id="user-email">Loading...</div>
+                    </div>
+
+                    <div class="info-item">
+                        <span class="info-label">Phone Number</span>
+                        <div class="info-value" id="user-phone">Loading...</div>
+                    </div>
+
+                    <div class="info-item">
+                        <span class="info-label">Gender</span>
+                        <div class="info-value" id="user-gender">Loading...</div>
+                    </div>
+
+                    <div class="info-item">
+                        <span class="info-label">Address Line 1</span>
+                        <div class="info-value" id="address-line1">Loading...</div>
+                    </div>
+
+                    <div class="info-item">
+                        <span class="info-label">Address Line 2</span>
+                        <div class="info-value" id="address-line2">Loading...</div>
+                    </div>
+
+                    <div class="info-item">
+                        <span class="info-label">City</span>
+                        <div class="info-value" id="user-city">Loading...</div>
+                    </div>
+
+                    <div class="info-item">
+                        <span class="info-label">State</span>
+                        <div class="info-value" id="user-state">Loading...</div>
+                    </div>
+
+                    <div class="info-item">
+                        <span class="info-label">Pincode</span>
+                        <div class="info-value" id="user-pincode">Loading...</div>
+                    </div>
+
+                    <div class="info-item">
+                        <span class="info-label">Account Created</span>
+                        <div class="info-value" id="account-created">Loading...</div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</nav>
-<!-- Navbar End -->
 
-    <div class="container">
-        <header>
-            <h1>Welcome to Your Dashboard</h1>
-        </header>
-        <section class="user-info">
-            <h2>Welcome, <span id="user-name">User</span>!</h2>
-            <div class="info-item">
-                <strong>Email:</strong> <span id="user-email"></span>
-            </div>
-            <div class="info-item">
-                <strong>Phone Number:</strong> <span id="user-phone"></span>
-            </div>
-            <div class="info-item">
-                <strong>Account Created:</strong> <span id="account-created"></span>
-            </div>
-        </section>
-        <section class="user-stats">
-            <h2>Statistics</h2>
-            <p><strong>Posts:</strong> 34</p>
-            <p><strong>Comments:</strong> 128</p>
-            <p><strong>Likes:</strong> 256</p>
-        </section>
-    </div>
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/wow/wow.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/waypoints/waypoints.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="js/main.js"></script>
+    
+    <!-- Firebase -->
     <script type="module" src="js/firebase.js"></script>
     <script type="module" src="js/dashboardB.js"></script>
-    <script type="module">
-        import { auth } from './js/firebase.js';
-        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        
-        // Check authentication state
-        onAuthStateChanged(auth, (user) => {
-            let authButton = document.getElementById("authButton");
-            let authDropdown = document.getElementById("authDropdown");
-            let signOutBtn = document.getElementById("signOutBtn");
-
-            if (user) {
-                // User is signed in
-                authButton.innerHTML = '<i class="fas fa-user-circle"></i>';
-                authButton.classList.remove('btn-primary');
-                authButton.classList.add('btn-link');
-                authDropdown.classList.add('show');
-                
-                // Update user information
-                document.getElementById('user-name').textContent = user.displayName || 'User';
-                document.getElementById('user-email').textContent = user.email;
-                document.getElementById('user-phone').textContent = user.phoneNumber || 'Not provided';
-                document.getElementById('account-created').textContent = new Date(user.metadata.creationTime).toLocaleDateString();
-            } else {
-                // User is signed out
-                window.location.replace("loginB.html");
-            }
-        });
-
-        // Handle sign out
-        document.getElementById("signOutBtn").addEventListener('click', async function(e) {
-            e.preventDefault();
-            try {
-                await signOut(auth);
-                window.location.replace("index.html");
-            } catch (error) {
-                console.error("Error signing out:", error);
-                alert("Error signing out. Please try again.");
-            }
-        });
-    </script>
-    <script src="js/script.js"></script>
 </body>
 </html>
