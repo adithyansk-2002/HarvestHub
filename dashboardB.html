@@ -76,6 +76,15 @@
             background-color: #f8f9fa;
             color: #2e6f40;
         }
+        .user-info {
+            padding: 20px;
+            margin: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .info-item {
+            margin: 10px 0;
+        }
     </style>
 </head>
 <body>
@@ -123,10 +132,16 @@
             <h1>Welcome to Your Dashboard</h1>
         </header>
         <section class="user-info">
-            <h2>User Information</h2>
-            <p><strong>Name:</strong> <span id="user-name">John Doe</span></p>
-            <!--<p><strong>Email:</strong> johndoe123@example.com</p>-->
-            <p><strong>Member Since:</strong> January 2023</p>
+            <h2>Welcome, <span id="user-name">User</span>!</h2>
+            <div class="info-item">
+                <strong>Email:</strong> <span id="user-email"></span>
+            </div>
+            <div class="info-item">
+                <strong>Phone Number:</strong> <span id="user-phone"></span>
+            </div>
+            <div class="info-item">
+                <strong>Account Created:</strong> <span id="account-created"></span>
+            </div>
         </section>
         <section class="user-stats">
             <h2>Statistics</h2>
@@ -135,6 +150,8 @@
             <p><strong>Likes:</strong> 256</p>
         </section>
     </div>
+    <script type="module" src="js/firebase.js"></script>
+    <script type="module" src="js/dashboardB.js"></script>
     <script type="module">
         import { auth } from './js/firebase.js';
         import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
@@ -154,7 +171,9 @@
                 
                 // Update user information
                 document.getElementById('user-name').textContent = user.displayName || 'User';
-                document.querySelector('.user-info p:nth-child(2)').innerHTML = `<strong>Email:</strong> ${user.email}`;
+                document.getElementById('user-email').textContent = user.email;
+                document.getElementById('user-phone').textContent = user.phoneNumber || 'Not provided';
+                document.getElementById('account-created').textContent = new Date(user.metadata.creationTime).toLocaleDateString();
             } else {
                 // User is signed out
                 window.location.replace("loginB.html");
