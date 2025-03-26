@@ -25,14 +25,14 @@ signupSubmit.addEventListener("click", (e) => {
   // Check password strength
   if (!isPasswordStrong(signupPassword.value)) {
     alert("Use a strong password (minimum 8 characters with uppercase, lowercase, number, and special character)");
-    return; // Prevent further execution
-    }
+    return; // Prevent further execution
+  }
   createUserWithEmailAndPassword(auth, signupEmail.value, signupPassword.value)
     .then((userCredential) => {
       // Signed up
       const user = userCredential.user;
       setTimeout(() => {
-        window.location.href = "dashboardB.html";
+        window.location.href = "userInfoB.html";
       }, 1000);
       // ...
     })
@@ -48,9 +48,8 @@ googleButton.addEventListener('click', (e) => {
     signInWithPopup(auth, provider)
         .then((result) => {
             const user = result.user;
-            // Wait for 1 second (1000 milliseconds) before redirecting to index.html
             setTimeout(() => {
-                window.location.href = 'dashboardB.html';
+                window.location.href = 'userInfoB.html';
             }, 1000);
         })
         .catch(handleError);
