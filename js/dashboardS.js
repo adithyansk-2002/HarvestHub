@@ -107,7 +107,7 @@ onAuthStateChanged(auth, async (user) => {
     }
 });
 
-// Load Seller's Active Bidding Rooms with Timestamp Retrieval
+// Load Seller's Active Bidding Rooms with Timestamp Retrieval and "View Room" Button
 async function loadBiddingRooms(sellerId) {
     const roomsList = document.getElementById("biddingRoomsList");
     roomsList.innerHTML = "<li class='list-group-item'>Loading...</li>";
@@ -121,6 +121,7 @@ async function loadBiddingRooms(sellerId) {
     } else {
         querySnapshot.forEach((doc) => {
             const data = doc.data();
+            const roomId = doc.id;
 
             // Convert Firestore Timestamp to Readable Date
             let createdAtFormatted = "N/A";
@@ -129,15 +130,27 @@ async function loadBiddingRooms(sellerId) {
                 createdAtFormatted = date.toLocaleString();
             }
 
-            // Display Bidding Room Data Including Timestamp
+            // Create List Item with "View Room" Button
             const li = document.createElement("li");
-            li.className = "list-group-item";
-            li.innerHTML = `<strong>${data.itemName}</strong> - 
-                            Quantity: ${data.quantity} kg <br>
-                            Location: ${data.location} <br>
-                            Highest Bid: ₹${data.highestBid} <br>
-                            Created At: ${createdAtFormatted}`;
+            li.className = "list-group-item d-flex justify-content-between align-items-center";
+            li.innerHTML = `
+                <div>
+                    <strong>${data.itemName}</strong> - Quantity: ${data.quantity} kg<br>
+                    Location: ${data.location}<br>
+                    Highest Bid: ₹${data.highestBid}<br>
+                    Created At: ${createdAtFormatted}
+                </div>
+                <button class="btn btn-success view-room-btn" data-room-id="${roomId}">View Room</button>
+            `;
             roomsList.appendChild(li);
+        });
+
+        // Add event listener to each "View Room" button
+        document.querySelectorAll(".view-room-btn").forEach((button) => {
+            button.addEventListener("click", function () {
+                const roomId = this.getAttribute("data-room-id");
+                window.location.href = `biddingindex.html?roomId=${roomId}`;
+            });
         });
     }
 }
@@ -185,4 +198,4 @@ document.getElementById("createRoomBtn").addEventListener("click", async () => {
         console.error("❌ Error creating room:", error);
         alert("❌ Failed to create bidding room. Please try again.");
     }
-}); 
+});
