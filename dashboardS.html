@@ -5,281 +5,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Seller Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="lib/animate/animate.min.css">
-    <link rel="stylesheet" href="lib/owlcarousel/assets/owl.carousel.min.css">
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css">
-    <style>
-        body {
-            font-family: 'Heebo', sans-serif;
-            background-color: #f8f9fa;
-            color: #343a40;
-        }
-        header {
-            background-color: #3eaa4a;
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-        .container {
-            margin-top: 30px;
-        }
-        .user-info, .user-stats {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        h2 {
-            color: #3eaa4a;
-        }
-        .nav-item.dropdown {
-            position: relative;
-        }
-        
-        .nav-item.dropdown .dropdown-menu {
-            display: none;
-            position: absolute;
-            right: 0;
-            top: 100%;
-            background-color: white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            z-index: 1000;
-        }
-        
-        .nav-item.dropdown.show .dropdown-menu {
-            display: block;
-        }
-        
-        .btn-link {
-            color: #333;
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-        }
-        
-        .btn-link:hover {
-            color: #2e6f40;
-        }
-        
-        .fa-user-circle {
-            font-size: 1.5rem;
-        }
-        
-        .dropdown-item {
-            padding: 0.5rem 1rem;
-            color: #333;
-        }
-        
-        .dropdown-item:hover {
-            background-color: #f8f9fa;
-            color: #2e6f40;
-        }
-        .user-info {
-            padding: 20px;
-            margin: 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        .info-item {
-            margin: 10px 0;
-        }
-        .modal-content {
-            border-radius: 8px;
-        }
-        
-        .modal-header {
-            background-color: #3eaa4a;
-            color: white;
-            border-top-left-radius: 8px;
-            border-top-right-radius: 8px;
-        }
-        
-        .btn-close {
-            filter: brightness(0) invert(1);
-        }
-        
-        #createBiddingBtn {
-            background-color: #3eaa4a;
-            border-color: #3eaa4a;
-        }
-        
-        #createBiddingBtn:hover {
-            background-color: #2e8a3a;
-            border-color: #2e8a3a;
-        }
-    </style>
 </head>
 <body>
-    <!-- Navbar Start -->
-<nav class="navbar navbar-expand-lg bg-white navbar-light shadow sticky-top p-0">
-    <a href="index.html" class="navbar-brand d-flex align-items-center text-center py-0 px-4 px-lg-5">
-        <h1 class="m-0 text-primary">HarvestHub</h1>
-    </a>
-    <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarCollapse">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg bg-white navbar-light shadow sticky-top p-0">
+        <a href="index.html" class="navbar-brand d-flex align-items-center text-center py-0 px-4 px-lg-5">
+            <h1 class="m-0 text-primary">HarvestHub</h1>
+        </a>
         <div class="navbar-nav ms-auto p-4 p-lg-0">
-            <a href="index.html" class="nav-item nav-link active">Home</a>
-            <a href="about.html" class="nav-item nav-link">About</a>
-            <div class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Services</a>
-                <div class="dropdown-menu rounded-0 m-0">
-                    <a href="sellers.html" class="dropdown-item">Find a Seller</a>
-                    <a href="buyers.html" class="dropdown-item">Find a Buyer</a>
-                </div>
-            </div>
-            <div class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
-                <div class="dropdown-menu rounded-0 m-0">
-                    <a href="category.html" class="dropdown-item">Seller Category</a>
-                    <a href="testimonial.html" class="dropdown-item">Testimonial</a>
-                    <a href="404.html" class="dropdown-item">404</a>
-                </div>
-            </div>
+            <a href="index.html" class="nav-item nav-link">Home</a>
             <a href="contact.html" class="nav-item nav-link">Contact</a>
             <div class="nav-item dropdown" id="authDropdown">
-                <a id="authButton" href="loginS.html" class="btn btn-primary rounded-0 py-4 px-lg-5 mt-3 mt-lg-0">Sign In</a>
+                <a id="authButton" href="loginS.html" class="btn btn-primary rounded-0 py-4 px-lg-5">Sign In</a>
                 <div class="dropdown-menu dropdown-menu-end rounded-0 m-0">
                     <a href="#" class="dropdown-item" id="signOutBtn">Sign Out</a>
                 </div>
             </div>
         </div>
-    </div>
-</nav>
-<!-- Navbar End -->
-    <div class="container">
+    </nav>
+
+    <!-- Dashboard -->
+    <div class="container mt-5">
         <header>
             <h1>Welcome to Your Dashboard</h1>
         </header>
         <section class="user-info">
             <h2>Welcome, <span id="user-name">User</span>!</h2>
-            <div class="info-item">
-                <strong>Email:</strong> <span id="user-email"></span>
-            </div>
-            <div class="info-item">
-                <strong>Phone Number:</strong> <span id="user-phone"></span>
-            </div>
-            <div class="info-item">
-                <strong>Account Created:</strong> <span id="account-created"></span>
-            </div>
+            <div><strong>Email:</strong> <span id="user-email"></span></div>
             <button class="btn btn-primary mt-3" id="createBiddingBtn">Create Bidding Room</button>
         </section>
+
+        <h3 class="mt-5">Your Active Bidding Rooms</h3>
+        <ul id="biddingRoomsList" class="list-group mt-3"></ul>
     </div>
 
     <!-- Bidding Room Modal -->
-    <div class="modal fade" id="biddingModal" tabindex="-1" aria-labelledby="biddingModalLabel" aria-hidden="true">
+    <div class="modal fade" id="biddingModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="biddingModalLabel">Create Bidding Room</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title">Create Bidding Room</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <form id="biddingForm">
                         <div class="mb-3">
-                            <label for="cropName" class="form-label">Crop Name</label>
+                            <label>Crop Name</label>
                             <input type="text" class="form-control" id="cropName" required>
                         </div>
                         <div class="mb-3">
-                            <label for="quantity" class="form-label">Quantity (in kg)</label>
+                            <label>Quantity (kg)</label>
                             <input type="number" class="form-control" id="quantity" required>
                         </div>
                         <div class="mb-3">
-                            <label for="location" class="form-label">Location</label>
+                            <label>Location</label>
                             <input type="text" class="form-control" id="location" required>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="createRoomBtn">Create Room</button>
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-primary" id="createRoomBtn">Create Room</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <script type="module">
-        import { auth } from './js/firebase.js';
-        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        
-        // Check authentication state
-        onAuthStateChanged(auth, (user) => {
-            let authButton = document.getElementById("authButton");
-            let authDropdown = document.getElementById("authDropdown");
-            let signOutBtn = document.getElementById("signOutBtn");
-
-            if (user) {
-                // User is signed in
-                authButton.innerHTML = '<i class="fas fa-user-circle"></i>';
-                authButton.classList.remove('btn-primary');
-                authButton.classList.add('btn-link');
-                authDropdown.classList.add('show');
-                
-                // Update user information
-                document.getElementById('user-name').textContent = user.displayName || 'User';
-                document.getElementById('user-email').textContent = user.email;
-                document.getElementById('user-phone').textContent = user.phoneNumber || 'Not provided';
-                document.getElementById('account-created').textContent = new Date(user.metadata.creationTime).toLocaleDateString();
-            } else {
-                // User is signed out
-                window.location.href = "loginS.html";
-            }
-        });
-
-        // Handle sign out
-        document.getElementById("signOutBtn").addEventListener('click', async function(e) {
-            e.preventDefault();
-            try {
-                await signOut(auth);
-                window.location.href = "loginS.html";
-            } catch (error) {
-                console.error("Error signing out:", error);
-                alert("Error signing out. Please try again.");
-            }
-        });
-
-        // Initialize the modal
-        let biddingModal;
-        document.addEventListener('DOMContentLoaded', function() {
-            biddingModal = new bootstrap.Modal(document.getElementById('biddingModal'));
-        });
-
-        // Open modal when create bidding button is clicked
-        document.getElementById('createBiddingBtn').addEventListener('click', () => {
-            biddingModal.show();
-        });
-
-        // Handle room creation
-        document.getElementById('createRoomBtn').addEventListener('click', () => {
-            const cropName = document.getElementById('cropName').value;
-            const quantity = document.getElementById('quantity').value;
-            const location = document.getElementById('location').value;
-
-            if (cropName && quantity && location) {
-                // Here you can add the logic to create the bidding room
-                console.log('Creating bidding room with:', {
-                    cropName,
-                    quantity,
-                    location
-                });
-                
-                // Close the modal
-                biddingModal.hide();
-                
-                // Reset the form
-                document.getElementById('biddingForm').reset();
-                
-                // Show success message
-                alert('Bidding room created successfully!');
-            } else {
-                alert('Please fill in all fields');
-            }
-        });
-    </script>
+    <script type="module" src="js/dashboardS.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="js/script.js"></script>
 </body>
 </html>
