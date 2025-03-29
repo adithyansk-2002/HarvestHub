@@ -1,3 +1,8 @@
+import sys
+import codecs
+
+sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer)
+
 from flask import Flask, request, jsonify, render_template
 import numpy as np
 import pandas as pd
@@ -11,7 +16,7 @@ app = Flask(__name__)
 model = load_model("second_model.keras")  # Replace with actual model path
 
 # Load CSV file
-df = pd.read_csv("dataset/wfp_food_prices_ind.csv")  # Replace with actual CSV path
+df = pd.read_csv("dataset/wfp_food_prices_ind.csv", encoding='utf-8')  # Added UTF-8 encoding
 
 # Convert date column to datetime format
 df["date"] = pd.to_datetime(df["date"], format="%d-%m-%Y", errors="coerce")
@@ -21,7 +26,16 @@ df["commodity"] = df["commodity"].str.strip().str.lower()
 
 # Print available crops
 print("\nAvailable crops in the dataset:")
-print(sorted(df["commodity"].unique().tolist()))
+try:
+    crops_list = sorted(df["commodity"].unique().tolist())
+    print(str(crops_list).encode('utf-8').decode('utf-8'))
+except UnicodeEncodeError:
+    # Fallback printing method
+    for crop in crops_list:
+        try:
+            print(crop)
+        except UnicodeEncodeError:
+            print(f"[Unprintable crop name: {crop.encode('ascii', 'replace').decode()}]")
 print("\n")
 
 @app.route('/')
