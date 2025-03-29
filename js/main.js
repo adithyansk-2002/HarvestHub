@@ -145,7 +145,7 @@ async function getDistance(sellerLat, sellerLng) {
     const buyerLng = 77.5946;  // Example: Bangalore
 
     // API URL
-    const apiUrl = `https://api.olamaps.io/routing/v1/distanceMatrix?origins=${buyerLat},${buyerLng}&destinations=${sellerLat},${sellerLng}&api_key=${KRUTRIM_API_KEY}`;
+    const apiUrl = `https://api.olamaps.io/routing/v1/distanceMatrix?origins=${buyerLat},${buyerLng}&destinations=${sellerLat},${sellerLng}&api_key=${YFtLtfLjvMc9EwQ5jrMFTfOVnUDpBsf48Upv6xdM}`;
     
     console.log("Calling API URL:", apiUrl);
 
@@ -159,7 +159,8 @@ async function getDistance(sellerLat, sellerLng) {
         if (data && data.status === "OK") {
             // Extract the distance (assuming response format)
             if (data.results && data.results[0] && data.results[0].distance) {
-                const distance = data.results[0].distance.value; // Distance in meters
+     
+         const distance = data.results[0].distance.value; // Distance in meters
                 console.log(`Distance: ${distance / 1000} km`);
             } else {
                 console.error("Distance data not found in the expected format:", data);
