@@ -14,6 +14,20 @@ let biddingStarted = false;
 function initBidding() {
     // Don't start the timer immediately
     addSystemMessage("Please predict a price to start the bidding session.");
+    
+    // New code to handle room ID
+    document.addEventListener("DOMContentLoaded", () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const roomId = urlParams.get("roomId");
+
+        if (!roomId) {
+            alert("No Room ID provided!");
+            return;
+        }
+
+        console.log(`Entered Bidding Room: ${roomId}`);
+        loadBiddingRoom(roomId);
+    });
 }
 
 // Update the timer display
@@ -155,6 +169,20 @@ async function predictPrice() {
             <h3 class="error">Error</h3>
             <p class="error-details">${error.message}</p>
         `;
+    }
+}
+
+// Load bidding room based on Room ID
+async function loadBiddingRoom(roomId) {
+    const roomRef = doc(db, "biddingRooms", roomId);
+    const roomSnap = await getDoc(roomRef);
+
+    if (roomSnap.exists()) {
+        const data = roomSnap.data();
+        document.getElementById("room-title").innerText = `Bidding Room - ${roomId}`;
+        console.log("Loaded Room Data:", data);
+    } else {
+        alert("Bidding Room not found!");
     }
 }
 

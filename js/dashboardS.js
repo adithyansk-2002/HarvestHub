@@ -149,7 +149,9 @@ async function loadBiddingRooms(sellerId) {
         document.querySelectorAll(".view-room-btn").forEach((button) => {
             button.addEventListener("click", function () {
                 const roomId = this.getAttribute("data-room-id");
-                window.location.href = `biddingindex.html?roomId=${roomId}`;
+                const path = `../bidding interface ui/biddingindex.html?roomId=${roomId}`;
+                console.log("Navigating to:", path); // Log the path
+                window.location.href = path;
             });
         });
     }
