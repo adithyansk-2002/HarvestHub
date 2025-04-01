@@ -109,51 +109,65 @@ onAuthStateChanged(auth, async (user) => {
 
 // Load Seller's Active Bidding Rooms with Timestamp Retrieval and "View Room" Button
 async function loadBiddingRooms(sellerId) {
+    console.log("Loading bidding rooms for seller:", sellerId);
     const roomsList = document.getElementById("biddingRoomsList");
+    if (!roomsList) {
+        console.error("Could not find biddingRoomsList element");
+        return;
+    }
     roomsList.innerHTML = "<li class='list-group-item'>Loading...</li>";
 
-    const q = query(collection(db, "biddingRooms"), where("sellerId", "==", sellerId), where("status", "==", "open"));
-    const querySnapshot = await getDocs(q);
+    try {
+        const q = query(collection(db, "biddingRooms"), where("sellerId", "==", sellerId), where("status", "==", "open"));
+        console.log("Query created:", q);
+        const querySnapshot = await getDocs(q);
+        console.log("Query results:", querySnapshot.size, "rooms found");
 
-    roomsList.innerHTML = "";
-    if (querySnapshot.empty) {
-        roomsList.innerHTML = "<li class='list-group-item'>No active bidding rooms.</li>";
-    } else {
-        querySnapshot.forEach((doc) => {
-            const data = doc.data();
-            const roomId = doc.id;
+        roomsList.innerHTML = "";
+        if (querySnapshot.empty) {
+            console.log("No active bidding rooms found");
+            roomsList.innerHTML = "<li class='list-group-item'>No active bidding rooms.</li>";
+        } else {
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                console.log("Room data:", data);
+                const roomId = doc.id;
 
-            // Convert Firestore Timestamp to Readable Date
-            let createdAtFormatted = "N/A";
-            if (data.createdAt) {
-                const date = data.createdAt.toDate();
-                createdAtFormatted = date.toLocaleString();
-            }
+                // Convert Firestore Timestamp to Readable Date
+                let createdAtFormatted = "N/A";
+                if (data.createdAt) {
+                    const date = data.createdAt.toDate();
+                    createdAtFormatted = date.toLocaleString();
+                }
 
-            // Create List Item with "View Room" Button
-            const li = document.createElement("li");
-            li.className = "list-group-item d-flex justify-content-between align-items-center";
-            li.innerHTML = `
-                <div>
-                    <strong>${data.itemName}</strong> - Quantity: ${data.quantity} kg<br>
-                    Location: ${data.location}<br>
-                    Highest Bid: ₹${data.highestBid}<br>
-                    Created At: ${createdAtFormatted}
-                </div>
-                <button class="btn btn-success view-room-btn" data-room-id="${roomId}">View Room</button>
-            `;
-            roomsList.appendChild(li);
-        });
-
-        // Add event listener to each "View Room" button
-        document.querySelectorAll(".view-room-btn").forEach((button) => {
-            button.addEventListener("click", function () {
-                const roomId = this.getAttribute("data-room-id");
-                const path = `../bidding_interface/bidding/templates/biddingindex.html?roomId=${roomId}`;
-                console.log("Navigating to:", path);
-                window.location.href = path;
+                // Create List Item with "View Room" Button
+                const li = document.createElement("li");
+                li.className = "list-group-item d-flex justify-content-between align-items-center";
+                li.innerHTML = `
+                    <div>
+                        <strong>${data.itemName}</strong> - Quantity: ${data.quantity} kg<br>
+                        Location: ${data.location}<br>
+                        Highest Bid: ₹${data.highestBid}<br>
+                        Created At: ${createdAtFormatted}
+                    </div>
+                    <button class="btn btn-success view-room-btn" data-room-id="${roomId}">View Room</button>
+                `;
+                roomsList.appendChild(li);
             });
-        });
+
+            // Add event listener to each "View Room" button
+            document.querySelectorAll(".view-room-btn").forEach((button) => {
+                button.addEventListener("click", function () {
+                    const roomId = this.getAttribute("data-room-id");
+                    const path = `../bidding_interface/bidding/templates/biddingindex.html?roomId=${roomId}`;
+                    console.log("Navigating to:", path);
+                    window.location.href = path;
+                });
+            });
+        }
+    } catch (error) {
+        console.error("Error loading bidding rooms:", error);
+        roomsList.innerHTML = "<li class='list-group-item text-danger'>Error loading bidding rooms. Please try again.</li>";
     }
 }
 
