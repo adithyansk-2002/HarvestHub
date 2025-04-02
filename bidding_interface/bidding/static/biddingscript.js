@@ -1,3 +1,21 @@
+// Firebase Configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyDc3h5uJK-DJ4t9oL0ImbHxn-atM166CT8",
+    authDomain: "harvesthub-c54c6.firebaseapp.com",
+    databaseURL: "https://harvesthub-c54c6-default-rtdb.firebaseio.com",
+    projectId: "harvesthub-c54c6",
+    storageBucket: "harvesthub-c54c6.firebasestorage.app",
+    messagingSenderId: "330622578420",
+    appId: "1:330622578420:web:6691d622a955a2c7c578a1"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// Get Firestore functions
+const { doc, getDoc, updateDoc } = firebase.firestore;
+
 // Available crops for validation
 const validCrops = [
     'onions', 'potatoes', 'rice', 'salt (iodised)', 'sugar', 
@@ -9,10 +27,60 @@ let highestBid = 600;
 let timeRemaining = 300; // 5 minutes in seconds
 let timer;
 let biddingStarted = false;
+let currentRoomId = null;
+
+// Server configuration
+const SERVER_URL = 'http://127.0.0.1:5000';  // Flask server URL
+const USE_FLASK = true;  // Set to true to enable Flask server functionality
+
+// Load room details from Firestore
+async function loadBiddingRoom() {
+    const params = new URLSearchParams(window.location.search);
+    currentRoomId = params.get("roomId");
+
+    if (!currentRoomId) {
+        document.getElementById("roomDetails").innerHTML = "<p class='error'>Error: No room ID provided.</p>";
+        document.getElementById("roomDetails").classList.add('error');
+        return;
+    }
+
+    try {
+        const roomRef = db.collection("biddingRooms").doc(currentRoomId);
+        const roomSnap = await roomRef.get();
+
+        if (!roomSnap.exists) {
+            document.getElementById("roomDetails").innerHTML = "<p class='error'>Room not found.</p>";
+            document.getElementById("roomDetails").classList.add('error');
+        } else {
+            const data = roomSnap.data();
+            highestBid = data.highestBid || 600;
+            document.getElementById("roomDetails").innerHTML = `
+                <h2>${data.itemName}</h2>
+                <p><strong>Quantity:</strong> ${data.quantity} kg</p>
+                <p><strong>Location:</strong> ${data.location}</p>
+                <p><strong>Current Highest Bid:</strong> ₹${highestBid}</p>
+                ${data.createdAt ? `<p><strong>Created:</strong> ${data.createdAt.toDate().toLocaleString()}</p>` : ''}
+            `;
+            document.getElementById("roomDetails").classList.remove('error', 'loading');
+        }
+    } catch (error) {
+        console.error("Error loading room:", error);
+        let errorMessage = "Error loading room details. Please try again.";
+        
+        if (error.code === 'permission-denied') {
+            errorMessage = "Access denied. Please check Firebase security rules.";
+        } else if (error.code === 'unavailable') {
+            errorMessage = "Unable to connect to the database. Please check your internet connection.";
+        }
+        
+        document.getElementById("roomDetails").innerHTML = `<p class='error'>${errorMessage}</p>`;
+        document.getElementById("roomDetails").classList.add('error');
+    }
+}
 
 // Initialize the bidding interface
-function initBidding() {
-    // Don't start the timer immediately
+async function initBidding() {
+    await loadBiddingRoom();
     addSystemMessage("Please predict a price to start the bidding session.");
 }
 
@@ -67,7 +135,7 @@ function addUserBid(amount) {
 }
 
 // Handle bid submission
-function sendBid() {
+async function sendBid() {
     if (!biddingStarted) {
         addSystemMessage("Please predict a price first to start the bidding session.");
         return;
@@ -91,10 +159,32 @@ function sendBid() {
         return;
     }
 
-    highestBid = bidAmount;
-    addUserBid(bidAmount);
-    addSystemMessage(`New highest bid: ₹${bidAmount}`);
-    bidInput.value = '';
+    try {
+        // Update Firestore with new bid
+        if (currentRoomId) {
+            const roomRef = db.collection("biddingRooms").doc(currentRoomId);
+            await roomRef.update({
+                highestBid: bidAmount,
+                highestBidderId: firebase.auth().currentUser?.uid || 'anonymous'
+            });
+        }
+
+        highestBid = bidAmount;
+        addUserBid(bidAmount);
+        addSystemMessage(`New highest bid: ₹${bidAmount}`);
+        bidInput.value = '';
+    } catch (error) {
+        console.error("Error updating bid:", error);
+        let errorMessage = "Error placing bid. Please try again.";
+        
+        if (error.code === 'permission-denied') {
+            errorMessage = "Access denied. Please check Firebase security rules.";
+        } else if (error.code === 'unavailable') {
+            errorMessage = "Unable to connect to the database. Please check your internet connection.";
+        }
+        
+        addSystemMessage(errorMessage);
+    }
 }
 
 // Price prediction function
@@ -124,7 +214,18 @@ async function predictPrice() {
         // Show loading state
         resultDiv.innerHTML = '<h3 class="loading">Calculating prediction...</h3>';
 
-        const response = await fetch('/predict', {
+        if (!USE_FLASK) {
+            // Use mock data when Flask is disabled
+            const mockPrediction = Math.floor(Math.random() * 5000) + 1000;
+            resultDiv.innerHTML = `
+                <h3>Prediction Result</h3>
+                <p>Predicted price for ${cropInput} in ${year}: ₹${mockPrediction}</p>
+            `;
+            startBiddingSession(mockPrediction);
+            return;
+        }
+
+        const response = await fetch(`${SERVER_URL}/predict`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -158,5 +259,116 @@ async function predictPrice() {
     }
 }
 
+// Start Flask and open bidding room
+async function startFlaskServerAndOpenRoom(roomId) {
+    if (!USE_FLASK) {
+        console.log("Flask server functionality is disabled");
+        return;
+    }
+
+    const maxRetries = 3;
+    const retryDelay = 2000; // 2 seconds
+
+    async function checkFlaskServer() {
+        try {
+            const response = await fetch(`${SERVER_URL}/ping`);
+            if (response.ok) {
+                const data = await response.json();
+                if (data.status === "running") {
+                    console.log("Flask server is running");
+                    return true;
+                }
+            }
+        } catch (error) {
+            console.log("Flask server is not running");
+        }
+        return false;
+    }
+
+    async function startFlaskServer() {
+        try {
+            const response = await fetch(`${SERVER_URL}/start-flask`);
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to start Flask server');
+            }
+            const data = await response.json();
+            
+            if (data.status === "Flask started") {
+                console.log("Flask server started successfully");
+                return true;
+            } else {
+                throw new Error(data.error || 'Failed to start Flask server');
+            }
+        } catch (error) {
+            console.error("Error starting Flask:", error);
+            addSystemMessage(`Failed to start bidding server: ${error.message}`);
+            return false;
+        }
+    }
+
+    // First check if Flask is already running
+    if (await checkFlaskServer()) {
+        window.location.href = `biddingindex.html?roomId=${roomId}`;
+        return;
+    }
+
+    // Try to start Flask server
+    if (!await startFlaskServer()) {
+        return;
+    }
+
+    // Wait for server to be ready
+    for (let i = 0; i < maxRetries; i++) {
+        await new Promise(resolve => setTimeout(resolve, retryDelay));
+        if (await checkFlaskServer()) {
+            window.location.href = `biddingindex.html?roomId=${roomId}`;
+            return;
+        }
+    }
+
+    addSystemMessage("Failed to connect to bidding server after multiple attempts. Please try again later.");
+}
+
+// Predict bid using Flask AI model
+async function predictBid() {
+    if (!USE_FLASK) {
+        console.log("Flask server functionality is disabled");
+        return;
+    }
+
+    try {
+        const response = await fetch(`${SERVER_URL}/predict_bid?crop=${currentRoomId}`);
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        
+        if (data.predicted_bid) {
+            document.getElementById('bid-amount').value = data.predicted_bid;
+            addSystemMessage(`AI Suggested Bid: ₹${data.predicted_bid}`);
+        } else {
+            throw new Error("No prediction received from server");
+        }
+    } catch (error) {
+        console.error("Error getting AI prediction:", error);
+        addSystemMessage(`Error getting AI prediction: ${error.message}`);
+    }
+}
+
+// Add AI prediction button to the UI
+function addAIPredictionButton() {
+    const inputContainer = document.querySelector('.input-container');
+    const aiButton = document.createElement('button');
+    aiButton.className = 'btn btn-info ms-2';
+    aiButton.textContent = 'Get AI Prediction';
+    aiButton.onclick = predictBid;
+    inputContainer.appendChild(aiButton);
+}
+
 // Initialize the bidding interface when the page loads
-document.addEventListener('DOMContentLoaded', initBidding);
+document.addEventListener('DOMContentLoaded', () => {
+    initBidding();
+    addAIPredictionButton();
+});
