@@ -4,8 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HarvestHub - Crop Price Prediction</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <link rel="stylesheet" href="../static/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        .room-details-section {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .room-info {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #2e6f40;
+        }
+
+        .room-info.loading {
+            text-align: center;
+            color: #666;
+        }
+
+        .room-info.error {
+            color: #dc3545;
+            border-left-color: #dc3545;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -15,6 +43,14 @@
         </header>
 
         <main>
+            <!-- Room Details Section -->
+            <section class="room-details-section">
+                <h2>Room Details</h2>
+                <div id="roomDetails" class="room-info loading">
+                    Loading room details...
+                </div>
+            </section>
+
             <section class="prediction-section">
                 <h2>Price Prediction</h2>
                 <div class="prediction-form">
@@ -60,6 +96,6 @@
             </section>
         </main>
     </div>
-    <script src="{{ url_for('static', filename='biddingscript.js') }}"></script>
+    <script src="../static/biddingscript.js"></script>
 </body>
 </html>

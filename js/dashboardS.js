@@ -145,9 +145,9 @@ async function loadBiddingRooms(sellerId) {
                 li.className = "list-group-item d-flex justify-content-between align-items-center";
                 li.innerHTML = `
                     <div>
-                        <strong>${data.itemName}</strong> - Quantity: ${data.quantity} kg<br>
+                        <strong>${data.itemName}</strong> - ₹${data.highestBid}<br>
+                        Quantity: ${data.quantity} kg<br>
                         Location: ${data.location}<br>
-                        Highest Bid: ₹${data.highestBid}<br>
                         Created At: ${createdAtFormatted}
                     </div>
                     <button class="btn btn-success view-room-btn" data-room-id="${roomId}">View Room</button>
@@ -157,11 +157,9 @@ async function loadBiddingRooms(sellerId) {
 
             // Add event listener to each "View Room" button
             document.querySelectorAll(".view-room-btn").forEach((button) => {
-                button.addEventListener("click", function () {
+                button.addEventListener("click", async function () {
                     const roomId = this.getAttribute("data-room-id");
-                    const path = `../bidding_interface/bidding/templates/biddingindex.html?roomId=${roomId}`;
-                    console.log("Navigating to:", path);
-                    window.location.href = path;
+                    await startFlaskServerAndOpenRoom(roomId);
                 });
             });
         }
@@ -169,6 +167,28 @@ async function loadBiddingRooms(sellerId) {
         console.error("Error loading bidding rooms:", error);
         roomsList.innerHTML = "<li class='list-group-item text-danger'>Error loading bidding rooms. Please try again.</li>";
     }
+}
+
+// Start Flask and open bidding room
+async function startFlaskServerAndOpenRoom(roomId) {
+    try {
+        let response = await fetch("http://127.0.0.1:5000/ping");
+        if (response.ok) {
+            console.log("Flask is already running.");
+            window.location.href = `../bidding_interface/bidding/templates/biddingindex.html?roomId=${roomId}`;
+            return;
+        }
+    } catch (error) {
+        console.log("Flask is not running. Starting...");
+    }
+
+    fetch("http://127.0.0.1:5000/start-flask")
+        .then(() => {
+            setTimeout(() => {
+                window.location.href = `biddingindex.html?roomId=${roomId}`;
+            }, 5000);
+        })
+        .catch((error) => console.error("Failed to start Flask:", error));
 }
 
 // Handle Bidding Room Creation
