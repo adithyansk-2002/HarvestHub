@@ -1,5 +1,6 @@
 import sys
 import codecs
+import os
 
 sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer)
 
@@ -12,11 +13,26 @@ from sklearn.preprocessing import MinMaxScaler
 
 app = Flask(__name__)
 
+# Get the absolute path to the current directory
+current_dir = os.path.dirname(os.path.abspath(__file__))
+model_path = os.path.join(current_dir, "second_model.keras")
+dataset_path = os.path.join(current_dir, "dataset", "wfp_food_prices_ind.csv")
+
 # Load the trained LSTM model
-model = load_model("second_model.keras")  # Replace with actual model path
+try:
+    model = load_model(model_path)
+    print(f"Model loaded successfully from: {model_path}")
+except Exception as e:
+    print(f"Error loading model: {str(e)}")
+    raise
 
 # Load CSV file
-df = pd.read_csv("dataset/wfp_food_prices_ind.csv", encoding='utf-8')  # Added UTF-8 encoding
+try:
+    df = pd.read_csv(dataset_path, encoding='utf-8')
+    print(f"Dataset loaded successfully from: {dataset_path}")
+except Exception as e:
+    print(f"Error loading dataset: {str(e)}")
+    raise
 
 # Convert date column to datetime format
 df["date"] = pd.to_datetime(df["date"], format="%d-%m-%Y", errors="coerce")
@@ -40,7 +56,7 @@ print("\n")
 
 @app.route('/')
 def home():
-    return render_template("index.html")
+    return render_template("biddingindex.html")
 
 @app.route('/predict', methods=['POST'])
 def predict():
