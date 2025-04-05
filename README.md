@@ -5,10 +5,10 @@
 <img src="img/icon-512x512.png" alt="HarvestHub Logo" width="200"/>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/adithyansk-2002/HarvestHub/pulls)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/adithyansk-2002/HarvestHub/graphs/commit-activity)
 
-[Demo](https://harvesthub.com) • [Report Bug](https://github.com/adithyansk-2002/HarvestHub/issues) • [Request Feature](https://github.com/adithyansk-2002/HarvestHub/issues)
+[Demo](https://adithyansk-2002.github.io/HarvestHub/) • [Report Bug](https://github.com/adithyansk-2002/HarvestHub/issues) • [Request Feature](https://github.com/adithyansk-2002/HarvestHub/issues)
 
 </div>
 
