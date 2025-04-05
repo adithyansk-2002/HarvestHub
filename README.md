@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![HarvestHub Logo](Temp\logo.jpg)
+<img src="img/icon-512x512.png" alt="HarvestHub Logo" width="200"/>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
