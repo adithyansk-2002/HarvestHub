@@ -67,5 +67,9 @@ googleButton.addEventListener('click', (e) => {
                 window.location.href = 'dashboardB.html';
             }, 1000);
         })
-        .catch(handleError);
+        .catch((error) => {
+            // Handle the error properly
+            console.error("Google Sign-in Error:", error);
+            alert(error.message || "Failed to sign in with Google. Please try again.");
+        });
 });

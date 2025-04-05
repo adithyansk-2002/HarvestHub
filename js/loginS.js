@@ -8,8 +8,6 @@ const googleButton = document.getElementById("googlebtn");
 console.log(document.getElementById("signup-submit")); // Should not be null
 console.log(document.getElementById("googlebtn")); // Should not be null
 
-
-
 loginbtn.addEventListener('click', (e) => {
 
     e.preventDefault(); // Prevent form submission
@@ -66,5 +64,9 @@ googleButton.addEventListener('click', (e) => {
                 window.location.href = 'dashboardS.html';
             }, 1000);
         })
-        .catch(handleError);
+        .catch((error) => {
+            // Handle the error properly
+            console.error("Google Sign-in Error:", error);
+            alert(error.message || "Failed to sign in with Google. Please try again.");
+        });
 });
