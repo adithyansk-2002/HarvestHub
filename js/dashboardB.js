@@ -126,7 +126,7 @@ async function loadBiddingRooms() {
         document.querySelectorAll('.join-room').forEach((button) => {
             button.addEventListener('click', (event) => {
                 const roomId = event.target.getAttribute('data-roomid');
-                window.location.href = `../bidding_interface/bidding/templates/biddingindex.html?roomId=${roomId}`;
+                window.location.href = `http://127.0.0.1:5000/?type=buyer&roomId=${roomId}`;
             });
         });
 

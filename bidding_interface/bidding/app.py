@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer)
 
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, redirect, url_for
 from flask_cors import CORS
 import numpy as np
 import pandas as pd
@@ -65,7 +65,18 @@ logger.info("\n")
 
 @app.route('/')
 def home():
-    return render_template("biddingindex.html")
+    user_type = request.args.get('type')
+    room_id = request.args.get('roomId')
+    
+    if not user_type or not room_id:
+        return "Missing parameters", 400
+        
+    if user_type == 'seller':
+        return render_template("seller_bidding.html", room_id=room_id)
+    elif user_type == 'buyer':
+        return render_template("buyer_bidding.html", room_id=room_id)
+    else:
+        return "Invalid user type", 400
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -155,6 +166,14 @@ def start_flask():
     except Exception as e:
         logger.error(f"Error starting Flask: {str(e)}")
         return jsonify({"error": str(e)}), 500
+
+@app.route('/seller/<room_id>')
+def seller_bidding(room_id):
+    return render_template("seller_bidding.html", room_id=room_id)
+
+@app.route('/buyer/<room_id>')
+def buyer_bidding(room_id):
+    return render_template("buyer_bidding.html", room_id=room_id)
 
 if __name__ == '__main__':
     try:

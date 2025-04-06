@@ -175,7 +175,7 @@ async function startFlaskServerAndOpenRoom(roomId) {
         let response = await fetch("http://127.0.0.1:5000/ping");
         if (response.ok) {
             console.log("Flask is already running.");
-            window.location.href = `../bidding_interface/bidding/templates/biddingindex.html?roomId=${roomId}`;
+            window.location.href = `http://127.0.0.1:5000/?type=seller&roomId=${roomId}`;
             return;
         }
     } catch (error) {
@@ -185,7 +185,7 @@ async function startFlaskServerAndOpenRoom(roomId) {
     fetch("http://127.0.0.1:5000/start-flask")
         .then(() => {
             setTimeout(() => {
-                window.location.href = `biddingindex.html?roomId=${roomId}`;
+                window.location.href = `http://127.0.0.1:5000/?type=seller&roomId=${roomId}`;
             }, 5000);
         })
         .catch((error) => console.error("Failed to start Flask:", error));

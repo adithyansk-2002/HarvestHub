@@ -28,10 +28,157 @@ let timeRemaining = 300; // 5 minutes in seconds
 let timer;
 let biddingStarted = false;
 let currentRoomId = null;
+let currentUserId = 'user_' + Math.random().toString(36).substr(2, 9); // Generate a temporary unique ID
+
+// Get user type from global config
+const userType = window.BIDDING_CONFIG.userType;
+const SERVER_URL = window.BIDDING_CONFIG.SERVER_URL;
 
 // Server configuration
-const SERVER_URL = 'http://127.0.0.1:5000';  // Flask server URL
 const USE_FLASK = true;  // Set to true to enable Flask server functionality
+
+// Set up real-time listener for bid updates
+function setupBidListener(roomId) {
+    // Initialize room if needed
+    initializeRoom(roomId);
+
+    // Set up presence tracking
+    setupPresenceTracking(roomId);
+
+    // Initially disable the bid input and button for buyers
+    if (userType === 'buyer') {
+        const bidInput = document.getElementById('bid-amount');
+        const bidButton = document.querySelector('.input-container button');
+        if (bidInput) {
+            bidInput.disabled = true;
+            bidInput.placeholder = "Waiting for seller to set initial price...";
+        }
+        if (bidButton) {
+            bidButton.disabled = true;
+        }
+    }
+
+    db.collection("biddingRooms").doc(roomId)
+        .onSnapshot((doc) => {
+            if (doc.exists) {
+                const data = doc.data();
+                
+                // Enable bid input and button when bidding starts
+                if (data.biddingStarted && userType === 'buyer' && timeRemaining > 0) {
+                    const bidInput = document.getElementById('bid-amount');
+                    const bidButton = document.querySelector('.input-container button');
+                    if (bidInput) {
+                        bidInput.disabled = false;
+                        bidInput.placeholder = "Enter your bid amount";
+                    }
+                    if (bidButton) {
+                        bidButton.disabled = false;
+                    }
+                }
+                
+                // Update the display
+                updateBidDisplay(data);
+                
+                // Update global variables
+                highestBid = data.highestBid;
+                
+                // Handle bidding session state
+                if (data.biddingStarted && data.startTime) {
+                    if (!biddingStarted) {
+                        biddingStarted = true;
+                        // Clear any existing timer
+                        if (timer) clearInterval(timer);
+                        // Start new timer that syncs with server time
+                        timer = setInterval(() => updateTimer(data.startTime), 1000);
+                        // Initial timer update
+                        updateTimer(data.startTime);
+                    }
+                }
+                
+                // Handle session end
+                if (data.status === "closed" && biddingStarted) {
+                    biddingStarted = false;
+                    if (timer) clearInterval(timer);
+                    document.getElementById('timer').textContent = "00:00";
+                    addSystemMessage("Bidding session has ended!");
+                }
+                
+                // Add message to chat about new bid
+                if (data.lastBidTime && data.highestBid) {
+                    const formattedBid = data.highestBid.toLocaleString('en-IN');
+                    if (userType === 'seller') {
+                        addSystemMessage(`New bid received: ₹${formattedBid}`);
+                    }
+                }
+            }
+        }, (error) => {
+            console.error("Error listening to room updates:", error);
+            addSystemMessage("Error receiving updates. Please refresh the page.");
+        });
+}
+
+// Update bid display
+function updateBidDisplay(data) {
+    const roomDetails = document.getElementById("roomDetails");
+    if (!roomDetails) return;
+
+    let displayHTML = `
+        <h3>${data.itemName || 'Unknown Item'}</h3>
+        <p><strong>Quantity:</strong> ${data.quantity || 0} kg</p>
+        <p><strong>Location:</strong> ${data.location || 'Unknown'}</p>
+    `;
+
+    // Add active buyers count if available
+    if (data.activeBuyers !== undefined) {
+        if (userType === 'seller') {
+            displayHTML += `
+                <p class="active-buyers">
+                    <strong>Active Buyers:</strong> 
+                    <span class="buyer-count">${data.activeBuyers}</span> 
+                    ${data.activeBuyers === 1 ? 'buyer is' : 'buyers are'} currently in the room
+                </p>
+            `;
+        } else {
+            const otherBuyers = Math.max(0, data.activeBuyers - 1);
+            displayHTML += `
+                <p class="active-buyers">
+                    <strong>Other Buyers:</strong> 
+                    <span class="buyer-count">${otherBuyers}</span> 
+                    other ${otherBuyers === 1 ? 'buyer is' : 'buyers are'} currently bidding
+                </p>
+            `;
+        }
+    }
+
+    // Add AI predicted price if available (only for buyers)
+    if (userType === 'buyer' && data.initialPrice) {
+        const perKgPrice = parseFloat(data.initialPrice).toFixed(2);
+        const totalPrice = (data.initialPrice * data.quantity).toLocaleString('en-IN');
+        displayHTML += `
+            <p><strong>AI Predicted Price:</strong> ₹${perKgPrice}/kg (Total: ₹${totalPrice})</p>
+        `;
+    }
+
+    // Add creation time if available
+    if (data.createdAt) {
+        displayHTML += `
+            <p><strong>Created:</strong> ${data.createdAt.toDate().toLocaleString()}</p>
+        `;
+    }
+
+    roomDetails.innerHTML = displayHTML;
+    roomDetails.classList.remove('error', 'loading');
+
+    // Update the current bid display in the highest-bid-box (only for buyers)
+    if (userType === 'buyer') {
+        const currentBidElement = document.getElementById('current-bid');
+        if (currentBidElement && data.highestBid) {
+            // Calculate total price by multiplying with quantity
+            const totalPrice = (data.highestBid * data.quantity).toLocaleString('en-IN');
+            currentBidElement.textContent = totalPrice;
+        }
+    }
+}
 
 // Load room details from Firestore
 async function loadBiddingRoom() {
@@ -54,14 +201,18 @@ async function loadBiddingRoom() {
         } else {
             const data = roomSnap.data();
             highestBid = data.highestBid || 600;
-            document.getElementById("roomDetails").innerHTML = `
-                <h2>${data.itemName}</h2>
-                <p><strong>Quantity:</strong> ${data.quantity} kg</p>
-                <p><strong>Location:</strong> ${data.location}</p>
-                <p><strong>Current Highest Bid:</strong> ₹${highestBid}</p>
-                ${data.createdAt ? `<p><strong>Created:</strong> ${data.createdAt.toDate().toLocaleString()}</p>` : ''}
-            `;
+            
+            // Update initial display
+            updateBidDisplay(data);
             document.getElementById("roomDetails").classList.remove('error', 'loading');
+
+            // Set up real-time listener for bid updates
+            setupBidListener(currentRoomId);
+
+            // If bidding has already started, initialize the session
+            if (data.biddingStarted) {
+                startBiddingSession(data.initialPrice || data.highestBid);
+            }
         }
     } catch (error) {
         console.error("Error loading room:", error);
@@ -81,47 +232,140 @@ async function loadBiddingRoom() {
 // Initialize the bidding interface
 async function initBidding() {
     await loadBiddingRoom();
-    addSystemMessage("Please predict a price to start the bidding session.");
+    
+    if (userType === 'seller') {
+        addSystemMessage("Use the AI prediction to set the initial price.");
+    } else {
+        addSystemMessage("Waiting for seller to set initial price...");
+    }
 }
 
-// Update the timer display
-function updateTimer() {
+// Update the timer display based on server time
+function updateTimer(startTime) {
+    const now = firebase.firestore.Timestamp.now();
+    const sessionStartTime = startTime.toDate();
+    const elapsedSeconds = Math.floor((now.toDate() - sessionStartTime) / 1000);
+    const totalSessionTime = 300; // 5 minutes in seconds
+    
+    timeRemaining = Math.max(0, totalSessionTime - elapsedSeconds);
+    const timerElement = document.getElementById('timer');
+    
     if (timeRemaining <= 0) {
         clearInterval(timer);
-        document.getElementById('timer').textContent = "00:00";
-        addSystemMessage("Bidding session ended!");
+        timerElement.textContent = "00:00";
+        timerElement.classList.remove('timer-warning');
+        timerElement.classList.add('timer-critical');
+        
+        // Disable the bid input and button
+        const bidInput = document.getElementById('bid-amount');
+        const bidButton = document.querySelector('.input-container button');
+        if (bidInput) {
+            bidInput.disabled = true;
+            bidInput.placeholder = "Bidding has ended";
+        }
+        if (bidButton) {
+            bidButton.disabled = true;
+        }
+
+        // Get and display final bid amount
+        db.collection("biddingRooms").doc(currentRoomId).get().then(doc => {
+            if (doc.exists) {
+                const data = doc.data();
+                const finalBid = data.highestBid.toLocaleString('en-IN');
+                addSystemMessage("Bidding session ended!");
+                addSystemMessage(`Final amount: ₹${finalBid}`);
+            }
+        });
+        
         biddingStarted = false;
+        
+        // Update room status when time ends
+        db.collection("biddingRooms").doc(currentRoomId).update({
+            status: "closed",
+            endTime: firebase.firestore.Timestamp.now()
+        });
         return;
     }
     
     const minutes = Math.floor(timeRemaining / 60);
     const seconds = timeRemaining % 60;
     const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    document.getElementById('timer').textContent = timeString;
-    timeRemaining--;
+    timerElement.textContent = timeString;
+
+    // Add warning class in last 30 seconds
+    if (timeRemaining <= 30) {
+        timerElement.classList.add('timer-warning');
+        // Calculate the animation progress (1 = start of warning, 0 = end)
+        const progress = timeRemaining / 30;
+        // Update the animation timing
+        timerElement.style.animationDuration = `${Math.max(0.5, progress)}s`;
+    } else {
+        timerElement.classList.remove('timer-warning');
+        timerElement.style.animationDuration = '';
+    }
 }
 
 // Start the bidding session
-function startBiddingSession(predictedPrice) {
+function startBiddingSession(initialPrice) {
     if (biddingStarted) return;
     
-    highestBid = predictedPrice;
-    timeRemaining = 300; // Reset to 5 minutes
-    biddingStarted = true;
-    
-    updateTimer();
-    timer = setInterval(updateTimer, 1000);
-    addSystemMessage(`Bidding session started! Initial bid: ₹${predictedPrice}`);
+    // Get the room data to access quantity
+    db.collection("biddingRooms").doc(currentRoomId).get()
+        .then((doc) => {
+            if (doc.exists) {
+                const roomData = doc.data();
+                const totalQuantity = roomData.quantity;
+                const perKgPrice = parseFloat(initialPrice).toFixed(2);
+                const totalPrice = (parseFloat(perKgPrice) * totalQuantity).toLocaleString('en-IN');
+                
+                highestBid = parseFloat(perKgPrice);
+                biddingStarted = true;
+                
+                // Update room with start time and initial price
+                return {
+                    perKgPrice,
+                    totalPrice,
+                    totalQuantity,
+                    updatePromise: db.collection("biddingRooms").doc(currentRoomId).update({
+                        biddingStarted: true,
+                        startTime: firebase.firestore.Timestamp.now(),
+                        initialPrice: parseFloat(perKgPrice),
+                        highestBid: parseFloat(perKgPrice),
+                        status: "active"
+                    })
+                };
+            }
+        })
+        .then((data) => {
+            if (data) {
+                return data.updatePromise.then(() => {
+                    addSystemMessage(`Bidding session started! Initial bid: ₹${data.totalPrice} (₹${data.perKgPrice}/kg for ${data.totalQuantity}kg)`);
+                });
+            }
+        })
+        .catch((error) => {
+            console.error("Error starting bidding session:", error);
+            addSystemMessage("Error starting bidding session. Please refresh the page.");
+        });
 }
 
 // Add a message to the chat
 function addMessage(message, type = 'system') {
     const chatMessages = document.getElementById('chat-messages');
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `message ${type}`;
-    messageDiv.textContent = message;
-    chatMessages.appendChild(messageDiv);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+    if (chatMessages) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${type}`;
+        
+        // Add timestamp to message
+        const timestamp = new Date().toLocaleTimeString();
+        messageDiv.innerHTML = `
+            <span class="message-time">[${timestamp}]</span>
+            <span class="message-text">${message}</span>
+        `;
+        
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
 }
 
 // Add a system message
@@ -129,66 +373,74 @@ function addSystemMessage(message) {
     addMessage(message, 'system');
 }
 
-// Add a user bid message
+// Add a bid message
 function addUserBid(amount) {
-    addMessage(`New bid: ₹${amount}`, 'user');
+    const formattedAmount = amount.toLocaleString('en-IN');
+    addMessage(`New bid: ₹${formattedAmount}`, 'bid');
 }
 
 // Handle bid submission
 async function sendBid() {
+    if (userType === 'seller') {
+        addSystemMessage("Sellers cannot place bids in their own rooms.");
+        return;
+    }
+
     if (!biddingStarted) {
-        addSystemMessage("Please predict a price first to start the bidding session.");
-        return;
-    }
-
-    const bidInput = document.getElementById('bid-amount');
-    const bidAmount = parseInt(bidInput.value);
-
-    if (isNaN(bidAmount) || bidAmount <= 0) {
-        addSystemMessage("Please enter a valid bid amount.");
-        return;
-    }
-
-    if (bidAmount <= highestBid) {
-        addSystemMessage(`Your bid must be higher than ₹${highestBid}`);
+        addSystemMessage("Please wait for the seller to set the initial price.");
         return;
     }
 
     if (timeRemaining <= 0) {
-        addSystemMessage("Bidding session has ended.");
+        addSystemMessage("Bidding session has ended. No more bids can be placed.");
         return;
     }
 
     try {
-        // Update Firestore with new bid
-        if (currentRoomId) {
-            const roomRef = db.collection("biddingRooms").doc(currentRoomId);
-            await roomRef.update({
-                highestBid: bidAmount,
-                highestBidderId: firebase.auth().currentUser?.uid || 'anonymous'
-            });
+        const roomRef = db.collection("biddingRooms").doc(currentRoomId);
+        const roomSnap = await roomRef.get();
+        const roomData = roomSnap.data();
+
+        const bidInput = document.getElementById('bid-amount');
+        const bidAmount = parseFloat(bidInput.value);
+
+        if (isNaN(bidAmount) || bidAmount <= 0) {
+            addSystemMessage("Please enter a valid bid amount.");
+            return;
         }
 
-        highestBid = bidAmount;
-        addUserBid(bidAmount);
-        addSystemMessage(`New highest bid: ₹${bidAmount}`);
+        // Calculate total minimum price based on initial price and quantity
+        const totalMinPrice = roomData.initialPrice * roomData.quantity;
+        const currentHighestBid = roomData.highestBid || totalMinPrice;
+
+        if (bidAmount <= Math.max(currentHighestBid, totalMinPrice)) {
+            addSystemMessage(`Your bid must be higher than ₹${Math.max(currentHighestBid, totalMinPrice).toLocaleString('en-IN')}`);
+            return;
+        }
+
+        await roomRef.update({
+            highestBid: bidAmount,
+            highestBidderId: 'anonymous',
+            lastBidTime: firebase.firestore.Timestamp.now()
+        });
+
         bidInput.value = '';
+        addUserBid(`New bid: ₹${bidAmount.toLocaleString('en-IN')}`);
+        addSystemMessage(`Bid placed successfully: ₹${bidAmount.toLocaleString('en-IN')}`);
+
     } catch (error) {
         console.error("Error updating bid:", error);
-        let errorMessage = "Error placing bid. Please try again.";
-        
-        if (error.code === 'permission-denied') {
-            errorMessage = "Access denied. Please check Firebase security rules.";
-        } else if (error.code === 'unavailable') {
-            errorMessage = "Unable to connect to the database. Please check your internet connection.";
-        }
-        
-        addSystemMessage(errorMessage);
+        addSystemMessage(`Error placing bid: ${error.message}`);
     }
 }
 
-// Price prediction function
+// Price prediction function (only for sellers)
 async function predictPrice() {
+    if (userType !== 'seller') {
+        addSystemMessage("Only sellers can predict prices.");
+        return;
+    }
+
     const cropInput = document.getElementById('crop').value.trim().toLowerCase();
     const yearInput = document.getElementById('year').value.trim();
     const resultDiv = document.getElementById('prediction-result');
@@ -202,28 +454,8 @@ async function predictPrice() {
             throw new Error('Please enter both crop name and year.');
         }
 
-        if (!validCrops.includes(cropInput)) {
-            throw new Error(`Invalid crop name. Please choose from the dropdown.`);
-        }
-
-        const year = parseInt(yearInput);
-        if (isNaN(year) || year <= 2000 || year > 2050) {
-            throw new Error('Please enter a valid year between 2001 and 2050.');
-        }
-
         // Show loading state
         resultDiv.innerHTML = '<h3 class="loading">Calculating prediction...</h3>';
-
-        if (!USE_FLASK) {
-            // Use mock data when Flask is disabled
-            const mockPrediction = Math.floor(Math.random() * 5000) + 1000;
-            resultDiv.innerHTML = `
-                <h3>Prediction Result</h3>
-                <p>Predicted price for ${cropInput} in ${year}: ₹${mockPrediction}</p>
-            `;
-            startBiddingSession(mockPrediction);
-            return;
-        }
 
         const response = await fetch(`${SERVER_URL}/predict`, {
             method: 'POST',
@@ -232,7 +464,7 @@ async function predictPrice() {
             },
             body: JSON.stringify({
                 crop: cropInput,
-                year: year
+                year: parseInt(yearInput)
             })
         });
 
@@ -242,19 +474,29 @@ async function predictPrice() {
             throw new Error(data.error);
         }
 
-        // Display success result
+        // Get the current room data to access quantity
+        const roomRef = db.collection("biddingRooms").doc(currentRoomId);
+        const roomSnap = await roomRef.get();
+        const roomData = roomSnap.data();
+        const totalQuantity = roomData.quantity;
+        
+        // Format predicted price to 2 decimal places
+        const perKgPrice = parseFloat(data.predicted_price).toFixed(2);
+        const totalPrice = (parseFloat(perKgPrice) * totalQuantity).toLocaleString('en-IN');
+
+        // Display only price per kg and total price
         resultDiv.innerHTML = `
             <h3>Prediction Result</h3>
-            <p>Predicted price for ${data.crop} in ${data.year}: ₹${data.predicted_price}</p>
+            <p>Price per kg: ₹${perKgPrice}</p>
+            <p>Total price: ₹${totalPrice}</p>
         `;
 
-        // Start the bidding session with the predicted price
-        startBiddingSession(data.predicted_price);
+        startBiddingSession(perKgPrice);
     } catch (error) {
-        // Display error message
+        console.error("Error:", error);
         resultDiv.innerHTML = `
             <h3 class="error">Error</h3>
-            <p class="error-details">${error.message}</p>
+            <p>${error.message}</p>
         `;
     }
 }
@@ -367,8 +609,43 @@ function addAIPredictionButton() {
     inputContainer.appendChild(aiButton);
 }
 
-// Initialize the bidding interface when the page loads
-document.addEventListener('DOMContentLoaded', () => {
-    initBidding();
-    addAIPredictionButton();
-});
+// Add this function to handle user presence
+function setupPresenceTracking(roomId) {
+    if (userType !== 'buyer') return; // Only track buyers
+
+    const roomRef = db.collection("biddingRooms").doc(roomId);
+
+    // Update presence when joining
+    roomRef.update({
+        activeBuyers: firebase.firestore.FieldValue.increment(1)
+    });
+
+    // Remove presence when leaving
+    window.addEventListener('beforeunload', () => {
+        roomRef.update({
+            activeBuyers: firebase.firestore.FieldValue.increment(-1)
+        });
+    });
+
+    // Cleanup on errors or crashes
+    window.addEventListener('unload', () => {
+        roomRef.update({
+            activeBuyers: firebase.firestore.FieldValue.increment(-1)
+        });
+    });
+}
+
+// Initialize the room with activeBuyers field if it doesn't exist
+async function initializeRoom(roomId) {
+    const roomRef = db.collection("biddingRooms").doc(roomId);
+    const doc = await roomRef.get();
+    
+    if (doc.exists && doc.data().activeBuyers === undefined) {
+        await roomRef.update({
+            activeBuyers: 0
+        });
+    }
+}
+
+// Initialize when the page loads
+document.addEventListener('DOMContentLoaded', initBidding);
