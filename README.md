@@ -106,6 +106,7 @@ HarvestHub is a web-based platform that connects farmers and buyers through an e
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 1. **Node.js & npm**
    ```bash
    # Check Node.js version (should be ≥ 14)
@@ -115,13 +116,40 @@ HarvestHub is a web-based platform that connects farmers and buyers through an e
    npm --version
    ```
 
-2. **Git**
+2. **Python (for AI Price Prediction)**
    ```bash
-   # Check Git version
-   git --version
+   # Check Python version (should be ≥ 3.8)
+   python --version
+   
+   # Required Python packages
+   pip install flask
+   pip install pandas
+   pip install scikit-learn
+   pip install numpy
+   pip install flask-cors
    ```
 
-3. **Web Browser**
+3. **Firebase Tools**
+   ```bash
+   # Install Firebase CLI globally
+   npm install -g firebase-tools
+   
+   # Login to Firebase
+   firebase login
+   ```
+
+4. **Required npm packages**
+   ```bash
+   # Install all required npm packages
+   npm install firebase
+   npm install bootstrap
+   npm install chart.js
+   npm install @firebase/firestore
+   npm install @firebase/auth
+   npm install @firebase/storage
+   ```
+
+5. **Web Browser**
    - Chrome (recommended)
    - Firefox
    - Safari
@@ -140,7 +168,7 @@ HarvestHub is a web-based platform that connects farmers and buyers through an e
    # Install project dependencies
    npm install
 
-   # Install additional development dependencies
+   # Install development dependencies
    npm install --save-dev @babel/core @babel/preset-env
    ```
 
@@ -153,6 +181,25 @@ HarvestHub is a web-based platform that connects farmers and buyers through an e
    nano .env
    ```
 
+4. **Start the Flask Server (for AI Price Prediction)**
+   ```bash
+   # Navigate to the Flask server directory
+   cd bidding_interface/bidding
+   
+   # Start the Flask server
+   python app.py
+   ```
+
+5. **Start the Application**
+   ```bash
+   # In a new terminal, start the application
+   # If using VS Code's Live Server:
+   # Right-click on index.html and select "Open with Live Server"
+   # 
+   # Or use Python's built-in server:
+   python -m http.server 5500
+   ```
+
 ### Firebase Setup
 
 1. **Create Firebase Project**
@@ -160,14 +207,11 @@ HarvestHub is a web-based platform that connects farmers and buyers through an e
    - Click "Add Project"
    - Follow the setup wizard
 
-2. **Enable Services**
-   ```javascript
-   // Enable in Firebase Console:
+2. **Enable Required Services**
    - Authentication (Email/Password)
    - Firestore Database
    - Storage
-   - Functions (optional)
-   ```
+   - Realtime Database (for presence system)
 
 3. **Configure Firebase**
    ```javascript
@@ -179,6 +223,51 @@ HarvestHub is a web-based platform that connects farmers and buyers through an e
    FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
    FIREBASE_APP_ID=your_app_id
    ```
+
+4. **Set up Firestore Security Rules**
+   ```javascript
+   rules_version = '2';
+   service cloud.firestore {
+     match /databases/{database}/documents {
+       // Rules for buyers collection
+       match /buyers/{userId} {
+         allow read, write: if request.auth != null && request.auth.uid == userId;
+       }
+       
+       // Rules for sellers collection
+       match /sellers/{userId} {
+         allow read, write: if request.auth != null && request.auth.uid == userId;
+       }
+
+       // Rules for bidding rooms and presence tracking
+       match /biddingRooms/{roomId} {
+         // For development and presence tracking
+         allow read, write: if true;
+         
+         // Subcollection rules
+         match /presence/{userId} {
+           allow read, write: if true;
+         }
+         
+         match /bids/{bidId} {
+           allow read: if request.auth != null;
+           allow write: if request.auth != null;
+         }
+       }
+     }
+   }
+   ```
+
+### Port Configuration
+- Flask server runs on port 5000
+- Web application should run on port 5500
+- Make sure these ports are available and not blocked by firewall
+
+### System Requirements
+- Minimum 4GB RAM
+- Modern web browser with JavaScript enabled
+- Internet connection for Firebase services
+- Port 5000 and 5500 available
 
 ## Project Structure
 
