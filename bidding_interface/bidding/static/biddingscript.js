@@ -549,9 +549,16 @@ async function predictPrice() {
             <p>Total price: ₹${totalPrice}</p>
         `;
 
+        // Start bidding session and update timer immediately
         startBiddingSession(perKgPrice);
+        
+        // Force an immediate timer update
+        if (timer) clearInterval(timer);
+        const startTime = firebase.firestore.Timestamp.now();
+        timer = setInterval(() => updateTimer(startTime), 1000);
+        updateTimer(startTime); // Call immediately for first update
     } catch (error) {
-        console.error("Error:", error);
+        console.error("Error predicting price:", error);
         resultDiv.innerHTML = `
             <h3 class="error">Error</h3>
             <p>${error.message}</p>
