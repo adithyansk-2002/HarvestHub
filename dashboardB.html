@@ -33,9 +33,22 @@
             font-family: 'Heebo', sans-serif;
         }
 
+        .container-xxl {
+            width: 100%;
+            margin-right: auto;
+            margin-left: auto;
+            padding: 0;
+        }
+
+        .container-fluid {
+            padding: 0;
+            background-color: #fff;
+            min-height: 100vh;
+        }
+
         .dashboard-container {
-            padding: 2rem 1rem;
-            max-width: 1200px;
+            padding: 2rem;
+            max-width: 1320px;
             margin: 0 auto;
         }
 
@@ -113,29 +126,13 @@
             font-weight: 500;
         }
 
-        @media (max-width: 768px) {
-            .dashboard-container {
-                padding: 1rem;
-            }
-            
-            .profile-header {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .profile-pic {
-                margin-right: 0;
-                margin-bottom: 1rem;
-            }
-        }
-
         .loading-spinner {
             text-align: center;
             padding: 20px;
         }
 
         .profile-card:not(.loaded) .info-grid {
-            opacity: 0.6;
+            opacity: 1;
         }
 
         .spinner {
@@ -153,9 +150,30 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Hide spinner when data is loaded */
         .profile-card.loaded .loading-spinner {
             display: none;
+        }
+
+        @media (min-width: 1400px) {
+            .container-xxl {
+                max-width: 1320px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 1rem;
+            }
+            
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .profile-pic {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
         }
     </style>
 </head>
@@ -202,76 +220,81 @@
         </nav>
         <!-- Navbar End -->
 
-        <div class="dashboard-container">
-            <div class="profile-card">
-                <div class="profile-header">
-                    <div class="profile-pic">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <div class="profile-name">
-                        <h2 id="user-name">Loading...</h2>
-                        <span class="status-badge">Verified Buyer</span>
-                    </div>
-                </div>
+        <!-- Main Content Wrapper -->
+        <div class="container-fluid bg-white p-0">
+            <div class="container">
+                <div class="dashboard-container">
+                    <div class="profile-card">
+                        <div class="profile-header">
+                            <div class="profile-pic">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="profile-name">
+                                <h2 id="user-name">Loading...</h2>
+                                <span class="status-badge">Verified Buyer</span>
+                            </div>
+                        </div>
 
-                <div class="loading-spinner">
-                    <div class="spinner"></div>
-                    <p>Loading your information...</p>
-                </div>
+                        <div class="loading-spinner">
+                            <div class="spinner"></div>
+                            <p>Loading your information...</p>
+                        </div>
 
-                <div class="info-grid">
-                    <div class="info-item">
-                        <span class="info-label">Email Address</span>
-                        <div class="info-value" id="user-email">Loading...</div>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="info-label">Email Address</span>
+                                <div class="info-value" id="user-email">Loading...</div>
+                            </div>
+
+                            <div class="info-item">
+                                <span class="info-label">Phone Number</span>
+                                <div class="info-value" id="user-phone">Loading...</div>
+                            </div>
+
+                            <div class="info-item">
+                                <span class="info-label">Gender</span>
+                                <div class="info-value" id="user-gender">Loading...</div>
+                            </div>
+
+                            <div class="info-item">
+                                <span class="info-label">Address Line 1</span>
+                                <div class="info-value" id="address-line1">Loading...</div>
+                            </div>
+
+                            <div class="info-item">
+                                <span class="info-label">Address Line 2</span>
+                                <div class="info-value" id="address-line2">Loading...</div>
+                            </div>
+
+                            <div class="info-item">
+                                <span class="info-label">City</span>
+                                <div class="info-value" id="user-city">Loading...</div>
+                            </div>
+
+                            <div class="info-item">
+                                <span class="info-label">State</span>
+                                <div class="info-value" id="user-state">Loading...</div>
+                            </div>
+
+                            <div class="info-item">
+                                <span class="info-label">Pincode</span>
+                                <div class="info-value" id="user-pincode">Loading...</div>
+                            </div>
+
+                            <div class="info-item">
+                                <span class="info-label">Account Created</span>
+                                <div class="info-value" id="account-created">Loading...</div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="info-item">
-                        <span class="info-label">Phone Number</span>
-                        <div class="info-value" id="user-phone">Loading...</div>
+                    <!-- Bidding Rooms Section -->
+                    <div class="profile-card">
+                        <h2>Bidding Rooms</h2>
+                        <div id="bidding-rooms-list">
+                            <p>Loading bidding rooms...</p>
+                        </div>
                     </div>
-
-                    <div class="info-item">
-                        <span class="info-label">Gender</span>
-                        <div class="info-value" id="user-gender">Loading...</div>
-                    </div>
-
-                    <div class="info-item">
-                        <span class="info-label">Address Line 1</span>
-                        <div class="info-value" id="address-line1">Loading...</div>
-                    </div>
-
-                    <div class="info-item">
-                        <span class="info-label">Address Line 2</span>
-                        <div class="info-value" id="address-line2">Loading...</div>
-                    </div>
-
-                    <div class="info-item">
-                        <span class="info-label">City</span>
-                        <div class="info-value" id="user-city">Loading...</div>
-                    </div>
-
-                    <div class="info-item">
-                        <span class="info-label">State</span>
-                        <div class="info-value" id="user-state">Loading...</div>
-                    </div>
-
-                    <div class="info-item">
-                        <span class="info-label">Pincode</span>
-                        <div class="info-value" id="user-pincode">Loading...</div>
-                    </div>
-
-                    <div class="info-item">
-                        <span class="info-label">Account Created</span>
-                        <div class="info-value" id="account-created">Loading...</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Bidding Rooms Section -->
-            <div class="profile-card">
-                <h2>Bidding Rooms</h2>
-                <div id="bidding-rooms-list">
-                    <p>Loading bidding rooms...</p>
                 </div>
             </div>
         </div>

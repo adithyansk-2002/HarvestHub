@@ -7,18 +7,37 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css">
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Inter:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="lib/animate/animate.min.css" rel="stylesheet">
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
     <style>
         body {
             background-color: #f8f9fa;
             font-family: 'Heebo', sans-serif;
         }
 
+        .container-xxl {
+            width: 100%;
+            margin-right: auto;
+            margin-left: auto;
+            padding: 0;
+        }
+
+        .container-fluid {
+            padding: 0;
+            background-color: #fff;
+            min-height: 100vh;
+        }
+
         .dashboard-container {
-            padding: 2rem 1rem;
-            max-width: 1200px;
+            padding: 2rem;
+            max-width: 1320px;
             margin: 0 auto;
         }
 
@@ -96,29 +115,13 @@
             font-weight: 500;
         }
 
-        @media (max-width: 768px) {
-            .dashboard-container {
-                padding: 1rem;
-            }
-            
-            .profile-header {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .profile-pic {
-                margin-right: 0;
-                margin-bottom: 1rem;
-            }
-        }
-
         .loading-spinner {
             text-align: center;
             padding: 20px;
         }
 
         .profile-card:not(.loaded) .info-grid {
-            opacity: 0.6;
+            opacity: 1;
         }
 
         .spinner {
@@ -136,133 +139,190 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Hide spinner when data is loaded */
         .profile-card.loaded .loading-spinner {
             display: none;
+        }
+
+        #biddingRoomsList {
+            opacity: 1 !important;
+        }
+
+        .bidding-room-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .room-details {
+            margin-bottom: 0.5rem;
+        }
+
+        .room-details strong {
+            color: #2e6f40;
+        }
+
+        .room-details span {
+            color: #666;
+            margin-left: 0.5rem;
+        }
+
+        @media (min-width: 1400px) {
+            .container-xxl {
+                max-width: 1320px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 1rem;
+            }
+            
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .profile-pic {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg bg-white navbar-light shadow sticky-top p-0">
-        <a href="index.html" class="navbar-brand d-flex align-items-center text-center py-0 px-4 px-lg-5">
-            <h1 class="m-0 text-primary">HarvestHub</h1>
-        </a>
-        <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarCollapse">
-            <div class="navbar-nav ms-auto p-4 p-lg-0">
-                <a href="index.html" class="nav-item nav-link">Home</a>
-                <a href="contact.html" class="nav-item nav-link">Contact</a>
-                <div class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Services</a>
-                    <div class="dropdown-menu rounded-0 m-0">
-                        <a href="sellers.html" class="dropdown-item">Find a Seller</a>
-                        <a href="buyers.html" class="dropdown-item">Find a Buyer</a>
+    <!-- Navbar Start -->
+    <div class="container-xxl bg-white p-0">
+        <nav class="navbar navbar-expand-lg bg-white navbar-light shadow sticky-top p-0">
+            <a href="index.html" class="navbar-brand d-flex align-items-center text-center py-0 px-4 px-lg-5">
+                <h1 class="m-0 text-primary">HarvestHub</h1>
+            </a>
+            <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <div class="navbar-nav ms-auto p-4 p-lg-0">
+                    <a href="index.html" class="nav-item nav-link">Home</a>
+                    <a href="about.html" class="nav-item nav-link">About</a>
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Services</a>
+                        <div class="dropdown-menu rounded-0 m-0">
+                            <a href="sellers.html" class="dropdown-item">Find a Seller</a>
+                            <a href="buyers.html" class="dropdown-item">Find a Buyer</a>
+                        </div>
+                    </div>
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
+                        <div class="dropdown-menu rounded-0 m-0">
+                            <a href="category.html" class="dropdown-item">Seller Category</a>
+                            <a href="testimonial.html" class="dropdown-item">Testimonial</a>
+                            <a href="404.html" class="dropdown-item">404</a>
+                        </div>
+                    </div>
+                    <a href="contact.html" class="nav-item nav-link">Contact</a>
+                    <div class="nav-item dropdown">
+                        <a href="#" class="btn btn-primary rounded-0 py-4 px-lg-5 d-none d-lg-block dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="fas fa-user me-2"></i>User
+                        </a>
+                        <div class="dropdown-menu rounded-0 m-0">
+                            <button id="signOutBtn" class="dropdown-item">Sign Out</button>
+                        </div>
                     </div>
                 </div>
-                <div class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
-                    <div class="dropdown-menu rounded-0 m-0">
-                        <a href="category.html" class="dropdown-item">Seller Category</a>
-                        <a href="testimonial.html" class="dropdown-item">Testimonial</a>
-                        <a href="404.html" class="dropdown-item">404</a>
+            </div>
+        </nav>
+    </div>
+    <!-- Navbar End -->
+
+    <!-- Add this right after the navbar's closing div -->
+    <div class="container-fluid bg-white p-0">
+        <div class="container">
+            <div class="dashboard-container">
+                <div class="profile-card loaded">
+                    <div class="profile-header">
+                        <div class="profile-pic">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="profile-name">
+                            <h2 id="user-name">Loading...</h2>
+                            <span class="status-badge">Verified Seller</span>
+                        </div>
+                    </div>
+
+                    <div class="loading-spinner">
+                        <div class="spinner"></div>
+                        <p>Loading your information...</p>
+                    </div>
+
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Email Address</span>
+                            <div class="info-value" id="user-email">Loading...</div>
+                        </div>
+
+                        <div class="info-item">
+                            <span class="info-label">Phone Number</span>
+                            <div class="info-value" id="user-phone">Loading...</div>
+                        </div>
+
+                        <div class="info-item">
+                            <span class="info-label">Gender</span>
+                            <div class="info-value" id="user-gender">Loading...</div>
+                        </div>
+
+                        <div class="info-item">
+                            <span class="info-label">Address Line 1</span>
+                            <div class="info-value" id="address-line1">Loading...</div>
+                        </div>
+
+                        <div class="info-item">
+                            <span class="info-label">Address Line 2</span>
+                            <div class="info-value" id="address-line2">Loading...</div>
+                        </div>
+
+                        <div class="info-item">
+                            <span class="info-label">City</span>
+                            <div class="info-value" id="user-city">Loading...</div>
+                        </div>
+
+                        <div class="info-item">
+                            <span class="info-label">State</span>
+                            <div class="info-value" id="user-state">Loading...</div>
+                        </div>
+
+                        <div class="info-item">
+                            <span class="info-label">Pincode</span>
+                            <div class="info-value" id="user-pincode">Loading...</div>
+                        </div>
+
+                        <div class="info-item">
+                            <span class="info-label">Account Created</span>
+                            <div class="info-value" id="account-created">Loading...</div>
+                        </div>
                     </div>
                 </div>
-                <div class="nav-item dropdown" id="authDropdown">
-                    <a id="authButton" href="loginS.html" class="btn btn-primary rounded-0 py-4 px-lg-5">Sign In</a>
-                    <div class="dropdown-menu dropdown-menu-end rounded-0 m-0">
-                        <a href="#" class="dropdown-item" id="signOutBtn">Sign Out</a>
+
+                <!-- Bidding Rooms Section -->
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <div class="profile-name">
+                            <h2>Active Bidding Rooms</h2>
+                            <button id="createBiddingBtn" class="btn btn-success">Create New Bidding Room</button>
+                        </div>
+                    </div>
+                    <div class="info-grid" id="biddingRoomsList">
+                        <div class="info-item">
+                            <p>Loading bidding rooms...</p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </nav>
-
-    <!-- Dashboard -->
-    <div class="dashboard-container">
-        <div class="profile-card">
-            <div class="profile-header">
-                <div class="profile-pic">
-                    <i class="fas fa-user"></i>
-                </div>
-                <div class="profile-name">
-                    <h2 id="user-name">Loading...</h2>
-                    <span class="status-badge">Verified Seller</span>
-                </div>
-            </div>
-
-            <div class="loading-spinner">
-                <div class="spinner"></div>
-                <p>Loading your information...</p>
-            </div>
-
-            <div class="info-grid">
-                <div class="info-item">
-                    <span class="info-label">Email Address</span>
-                    <div class="info-value" id="user-email">Loading...</div>
-                </div>
-
-                <div class="info-item">
-                    <span class="info-label">Phone Number</span>
-                    <div class="info-value" id="user-phone">Loading...</div>
-                </div>
-
-                <div class="info-item">
-                    <span class="info-label">Gender</span>
-                    <div class="info-value" id="user-gender">Loading...</div>
-                </div>
-
-                <div class="info-item">
-                    <span class="info-label">Address Line 1</span>
-                    <div class="info-value" id="address-line1">Loading...</div>
-                </div>
-
-                <div class="info-item">
-                    <span class="info-label">Address Line 2</span>
-                    <div class="info-value" id="address-line2">Loading...</div>
-                </div>
-
-                <div class="info-item">
-                    <span class="info-label">City</span>
-                    <div class="info-value" id="user-city">Loading...</div>
-                </div>
-
-                <div class="info-item">
-                    <span class="info-label">State</span>
-                    <div class="info-value" id="user-state">Loading...</div>
-                </div>
-
-                <div class="info-item">
-                    <span class="info-label">Pincode</span>
-                    <div class="info-value" id="user-pincode">Loading...</div>
-                </div>
-
-                <div class="info-item">
-                    <span class="info-label">Account Created</span>
-                    <div class="info-value" id="account-created">Loading...</div>
-                </div>
-            </div>
-        </div>
-
-        <header>
-            <h1>Welcome to Your Dashboard</h1>
-        </header>
-        <section class="user-info">
-            <h2>Welcome, <span id="user-name">User</span>!</h2>
-            <div><strong>Email:</strong> <span id="user-email"></span></div>
-            <button class="btn btn-primary mt-3" id="createBiddingBtn">Create Bidding Room</button>
-        </section>
-
-        <h3 class="mt-5">Your Active Bidding Rooms</h3>
-        <div class="list-group mt-3" id="biddingRoomsList">
-            <!-- Bidding rooms will be dynamically added here -->
         </div>
     </div>
 
-    <!-- Bidding Room Modal -->
+    <!-- Bidding Modal -->
     <div class="modal fade" id="biddingModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">

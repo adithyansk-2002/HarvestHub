@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('Error loading user information. Please refresh the page.');
             }
         } else {
-            window.location.href = 'loginB.html';
+            window.location.href = 'login.html';
         }
     });
 });

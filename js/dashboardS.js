@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
         signOutBtn.addEventListener('click', async () => {
             try {
                 await signOut(auth);
-                window.location.href = 'loginS.html';
+                window.location.href = 'login.html';
             } catch (error) {
                 console.error('Error signing out:', error);
                 alert('Error signing out. Please try again.');
@@ -103,7 +103,7 @@ onAuthStateChanged(auth, async (user) => {
                 '<p style="color: red;">Error loading data. Please refresh the page.</p>';
         }
     } else {
-        window.location.href = "loginS.html";
+        window.location.href = "login.html";
     }
 });
 
@@ -115,57 +115,74 @@ async function loadBiddingRooms(sellerId) {
         console.error("Could not find biddingRoomsList element");
         return;
     }
-    roomsList.innerHTML = "<li class='list-group-item'>Loading...</li>";
+    roomsList.innerHTML = `
+        <div class="info-item">
+            <p>Loading bidding rooms...</p>
+        </div>
+    `;
 
     try {
-        const q = query(collection(db, "biddingRooms"), where("sellerId", "==", sellerId), where("status", "==", "open"));
-        console.log("Query created:", q);
+        const q = query(collection(db, "biddingRooms"), 
+                       where("sellerId", "==", sellerId), 
+                       where("status", "==", "open"));
         const querySnapshot = await getDocs(q);
-        console.log("Query results:", querySnapshot.size, "rooms found");
 
-        roomsList.innerHTML = "";
         if (querySnapshot.empty) {
-            console.log("No active bidding rooms found");
-            roomsList.innerHTML = "<li class='list-group-item'>No active bidding rooms.</li>";
-        } else {
-            querySnapshot.forEach((doc) => {
-                const data = doc.data();
-                console.log("Room data:", data);
-                const roomId = doc.id;
-
-                // Convert Firestore Timestamp to Readable Date
-                let createdAtFormatted = "N/A";
-                if (data.createdAt) {
-                    const date = data.createdAt.toDate();
-                    createdAtFormatted = date.toLocaleString();
-                }
-
-                // Create List Item with "View Room" Button
-                const li = document.createElement("li");
-                li.className = "list-group-item d-flex justify-content-between align-items-center";
-                li.innerHTML = `
-                    <div>
-                        <strong>${data.itemName}</strong> - ₹${data.highestBid}<br>
-                        Quantity: ${data.quantity} kg<br>
-                        Location: ${data.location}<br>
-                        Created At: ${createdAtFormatted}
-                    </div>
-                    <button class="btn btn-success view-room-btn" data-room-id="${roomId}">View Room</button>
-                `;
-                roomsList.appendChild(li);
-            });
-
-            // Add event listener to each "View Room" button
-            document.querySelectorAll(".view-room-btn").forEach((button) => {
-                button.addEventListener("click", async function () {
-                    const roomId = this.getAttribute("data-room-id");
-                    await startFlaskServerAndOpenRoom(roomId);
-                });
-            });
+            roomsList.innerHTML = `
+                <div class="info-item">
+                    <p>No active bidding rooms.</p>
+                </div>
+            `;
+            return;
         }
+
+        let roomsHTML = '';
+        querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            const roomId = doc.id;
+
+            // Convert Firestore Timestamp to Readable Date
+            let createdAtFormatted = "N/A";
+            if (data.createdAt) {
+                const date = data.createdAt.toDate();
+                createdAtFormatted = date.toLocaleString();
+            }
+
+            roomsHTML += `
+                <div class="info-item">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>${data.itemName}</strong> - Quantity: ${data.quantity} kg
+                            <br>
+                            <span>Location: ${data.location}</span>
+                            <br>
+                            <span>Highest Bid: ₹${data.highestBid || 0}</span>
+                            <br>
+                            <span>Created At: ${createdAtFormatted}</span>
+                        </div>
+                        <button class="btn btn-success btn-sm view-room-btn" data-room-id="${roomId}">View Room</button>
+                    </div>
+                </div>
+            `;
+        });
+
+        roomsList.innerHTML = roomsHTML;
+
+        // Add event listeners to View Room buttons
+        document.querySelectorAll(".view-room-btn").forEach((button) => {
+            button.addEventListener("click", async function() {
+                const roomId = this.getAttribute("data-room-id");
+                await startFlaskServerAndOpenRoom(roomId);
+            });
+        });
+
     } catch (error) {
         console.error("Error loading bidding rooms:", error);
-        roomsList.innerHTML = "<li class='list-group-item text-danger'>Error loading bidding rooms. Please try again.</li>";
+        roomsList.innerHTML = `
+            <div class="info-item">
+                <p class="text-danger">Error loading bidding rooms. Please try again.</p>
+            </div>
+        `;
     }
 }
 
