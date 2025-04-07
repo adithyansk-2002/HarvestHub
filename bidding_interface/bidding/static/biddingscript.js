@@ -24,11 +24,13 @@ const validCrops = [
 
 // Global variables for bidding
 let highestBid = 600;
-let timeRemaining = 300; // 5 minutes in seconds
+let timeRemaining = 60; // 1 minute in seconds
 let timer;
 let biddingStarted = false;
 let currentRoomId = null;
 let currentUserId = 'user_' + Math.random().toString(36).substr(2, 9); // Generate a temporary unique ID
+let resultsDisplayed = false;
+let isBiddingActive = true;
 
 // Get user type from global config
 const userType = window.BIDDING_CONFIG.userType;
@@ -93,12 +95,12 @@ function setupBidListener(roomId) {
                     }
                 }
                 
-                // Handle session end
-                if (data.status === "closed" && biddingStarted) {
+                // If the room is closed and we haven't displayed results yet
+                if (data.status === "closed" && !resultsDisplayed) {
                     biddingStarted = false;
                     if (timer) clearInterval(timer);
                     document.getElementById('timer').textContent = "00:00";
-                    addSystemMessage("Bidding session has ended!");
+                    storeFinalBidDetails(roomId);
                 }
                 
                 // Add message to chat about new bid
@@ -113,6 +115,46 @@ function setupBidListener(roomId) {
                 if (data.status === "closed" && data.winningBid) {
                     const winnerMessage = `🎉 Bidding ended! Winner: ${data.winningBid.buyerName} with final bid: ₹${data.winningBid.amount.toLocaleString('en-IN')}`;
                     addSystemMessage(winnerMessage);
+                }
+
+                // When a new bid is placed, update the bidder's name
+                if (data.highestBidderId && data.highestBidderId !== 'anonymous') {
+                    db.collection("buyers").doc(data.highestBidderId).get()
+                        .then((buyerDoc) => {
+                            if (buyerDoc.exists) {
+                                const buyerData = buyerDoc.data();
+                                roomRef.update({
+                                    highestBidderName: buyerData.firstName
+                                });
+                            }
+                        })
+                        .catch((error) => {
+                            console.error("Error fetching buyer details:", error);
+                        });
+                }
+
+                // Check if the room has final results to display
+                if (data.finalResultsHTML && document.getElementById('roomDetails')) {
+                    let resultsContainer = document.getElementById('persistent-results-container');
+                    if (!resultsContainer) {
+                        resultsContainer = document.createElement('div');
+                        resultsContainer.id = 'persistent-results-container';
+                        document.getElementById("roomDetails").appendChild(resultsContainer);
+                    }
+                    resultsContainer.innerHTML = `
+                        <div class="bidding-result-container">
+                            ${data.finalResultsHTML}
+                        </div>
+                    `;
+                }
+
+                // Check if room is closed
+                if (data.status === "closed") {
+                    isBiddingActive = false;
+                    const bidInput = document.getElementById('bid-amount');
+                    const bidButton = document.querySelector('.input-container button');
+                    if (bidInput) bidInput.disabled = true;
+                    if (bidButton) bidButton.disabled = true;
                 }
             }
         }, (error) => {
@@ -254,12 +296,12 @@ function updateTimer(startTime) {
     const now = firebase.firestore.Timestamp.now();
     const sessionStartTime = startTime.toDate();
     const elapsedSeconds = Math.floor((now.toDate() - sessionStartTime) / 1000);
-    const totalSessionTime = 300; // 5 minutes in seconds
+    const totalSessionTime = 60; // 1 minute in seconds
     
     timeRemaining = Math.max(0, totalSessionTime - elapsedSeconds);
     const timerElement = document.getElementById('timer');
     
-    if (timeRemaining <= 0) {
+    if (timeRemaining <= 0 && !resultsDisplayed) {  // Add check for resultsDisplayed
         clearInterval(timer);
         timerElement.textContent = "00:00";
         timerElement.classList.remove('timer-warning');
@@ -276,10 +318,11 @@ function updateTimer(startTime) {
             bidButton.disabled = true;
         }
 
-        // Get final bid details and store in final_bid collection
+        // Call storeFinalBidDetails only if results haven't been displayed
         storeFinalBidDetails(currentRoomId);
         
         biddingStarted = false;
+        isBiddingActive = false;
         return;
     }
     
@@ -303,64 +346,218 @@ function updateTimer(startTime) {
 
 // Function to store final bid details
 async function storeFinalBidDetails(roomId) {
+    if (resultsDisplayed) {
+        return;
+    }
+
     try {
+        resultsDisplayed = true;
+
         // Get room details
         const roomRef = db.collection("biddingRooms").doc(roomId);
         const roomDoc = await roomRef.get();
         const roomData = roomDoc.data();
 
-        if (!roomData.highestBidderId || roomData.highestBidderId === 'anonymous') {
-            addSystemMessage("No bids were placed in this session.");
-            return;
+        if (!roomData) {
+            throw new Error("Room data not found");
         }
 
         // Get seller details
         const sellerRef = db.collection("sellers").doc(roomData.sellerId);
         const sellerDoc = await sellerRef.get();
-        const sellerData = sellerDoc.data();
+        const sellerData = sellerDoc.exists ? sellerDoc.data() : null;
 
-        // Get buyer details
-        const buyerRef = db.collection("buyers").doc(roomData.highestBidderId);
-        const buyerDoc = await buyerRef.get();
-        const buyerData = buyerDoc.data();
+        // Format seller full name and address
+        const sellerFullName = sellerData ? 
+            `${sellerData.firstName || ''} ${sellerData.lastName || ''}`.trim() : 
+            'Not available';
+        const sellerAddress = sellerData ? 
+            [
+                sellerData.addressLine1,
+                sellerData.addressLine2,
+                sellerData.city
+            ]
+            .filter(part => part && part.trim())
+            .join(', ') || 'Not provided' : 
+            'Not provided';
 
-        // Calculate final total price
-        const finalTotalPrice = parseFloat(roomData.highestBid) * roomData.quantity;
+        let winnerMessage = '';
 
-        // Store in final_bid collection
-        await db.collection("final_bid").add({
-            roomId: roomId,
-            cropName: roomData.itemName,
-            quantity: roomData.quantity,
-            finalBidPrice: finalTotalPrice,
-            pricePerKg: parseFloat(roomData.highestBid),
-            sellerAddress: sellerData.address,
-            sellerId: roomData.sellerId,
-            sellerName: sellerData.name,
-            buyerAddress: buyerData.address,
-            buyerId: roomData.highestBidderId,
-            buyerName: buyerData.name,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-        });
+        // Check if there's a bid higher than the initial price
+        if (roomData.highestBid && roomData.highestBid > roomData.initialPrice) {
+            // Calculate final total price
+            const finalTotalPrice = parseFloat(roomData.highestBid) * roomData.quantity;
 
-        // Update room status
-        await roomRef.update({
-            status: "closed",
-            endTime: firebase.firestore.Timestamp.now(),
-            winningBid: {
-                amount: finalTotalPrice,
-                buyerId: roomData.highestBidderId,
-                buyerName: buyerData.name
+            // Get buyer details if not anonymous
+            let buyerFullName = 'Buyer 1';
+            let buyerPhone = '9876543210';
+            let buyerAddress = '123, Main St, Anytown, India';
+
+            if (roomData.highestBidderId && roomData.highestBidderId !== 'anonymous') {
+                try {
+                    const buyerDoc = await db.collection("users").doc(roomData.highestBidderId).get();
+                    if (buyerDoc.exists) {
+                        const buyerData = buyerDoc.data();
+                        buyerFullName = `${buyerData.firstName || ''} ${buyerData.lastName || ''}`.trim();
+                        buyerPhone = buyerData.phone || 'Not provided';
+                        buyerAddress = [
+                            buyerData.addressLine1,
+                            buyerData.addressLine2,
+                            buyerData.city
+                        ]
+                        .filter(part => part && part.trim())
+                        .join(', ') || 'Not provided';
+                    }
+                } catch (buyerError) {
+                    console.error("Error fetching buyer details:", buyerError);
+                }
             }
-        });
 
-        // Display winner message to all participants
-        const winnerMessage = `🎉 Bidding ended! Winner: ${buyerData.name} with final bid: ₹${finalTotalPrice.toLocaleString('en-IN')}`;
-        addSystemMessage(winnerMessage);
+            // Store final bid details in the final_bid collection
+            try {
+                await db.collection("final_bid").add({
+                    roomId: roomId,
+                    cropName: roomData.itemName || 'N/A',
+                    quantity: roomData.quantity || 0,
+                    totalAmount: finalTotalPrice,
+                    timestamp: firebase.firestore.Timestamp.now(),
+                    sellerName: sellerFullName,
+                    sellerPhone: sellerData ? sellerData.phone : 'Not provided',
+                    sellerAddress: sellerAddress,
+                    buyerName: buyerFullName,
+                    BuyerPhone: buyerPhone,
+                    buyerAddress: buyerAddress
+                });
+                console.log("Final bid details stored successfully");
+            } catch (error) {
+                console.error("Error storing final bid details:", error);
+            }
+
+            // Create detailed winner message
+            winnerMessage = `
+                <div class="bidding-result-header">
+                    <h3>🏆 Bidding Session Completed!</h3>
+                </div>
+
+                <div class="bidding-result-footer">
+                    <p>Congratulations! The bidding has been successfully completed.</p>
+                    <p>Please proceed with the transaction process.</p>
+                </div>`;
+
+            // Update room status
+            await roomRef.update({
+                status: "closed",
+                endTime: firebase.firestore.Timestamp.now(),
+                winningBid: {
+                    amount: finalTotalPrice,
+                    buyerId: roomData.highestBidderId,
+                    buyerName: buyerFullName,
+                    buyerPhone: buyerPhone,
+                    buyerAddress: buyerAddress
+                },
+                finalResultsHTML: winnerMessage // Store the HTML for persistence
+            });
+
+        } else {
+            // If no valid bids were placed, just show the message without storing in final_bid
+            const totalInitialValue = roomData.initialPrice * roomData.quantity;
+            winnerMessage = `
+                <div class="bidding-result-header">
+                    <h3>📢 Bidding Session Ended</h3>
+                </div>
+
+                <div class="bidding-result-footer">
+                    <p>No valid bids were placed in this session.</p>
+                    <p>Initial price: ₹${roomData.initialPrice.toLocaleString('en-IN')}</p>
+                    <p>Highest bid received: ₹${(roomData.highestBid || 0).toLocaleString('en-IN')}</p>
+                </div>`;
+
+            // Update room status
+            await roomRef.update({
+                status: "closed",
+                endTime: firebase.firestore.Timestamp.now(),
+                finalResultsHTML: winnerMessage
+            });
+        }
+
+        // Add the styles only once
+        if (!document.getElementById('bidding-result-styles')) {
+            const styleElement = document.createElement('style');
+            styleElement.id = 'bidding-result-styles';
+            styleElement.textContent = `
+                .bidding-result-container {
+                    margin-top: 20px;
+                    padding: 20px;
+                    background: #f8f9fa;
+                    border-radius: 8px;
+                    border: 2px solid #2e7d32;
+                    font-family: Arial, sans-serif;
+                }
+                .bidding-result-header {
+                    margin-bottom: 20px;
+                    text-align: center;
+                }
+                .bidding-result-header h3 {
+                    color: #2e7d32;
+                    margin-bottom: 10px;
+                    font-size: 1.5em;
+                }
+                .room-id {
+                    color: #666;
+                    font-size: 0.9em;
+                }
+                .bidding-result-section {
+                    margin-bottom: 20px;
+                    padding: 15px;
+                    background: white;
+                    border-radius: 6px;
+                    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                }
+                .bidding-result-section h4 {
+                    color: #2e7d32;
+                    margin-bottom: 10px;
+                    font-size: 1.1em;
+                }
+                .bidding-result-section p {
+                    margin: 5px 0;
+                    color: #333;
+                }
+                .bidding-result-footer {
+                    text-align: center;
+                    margin-top: 20px;
+                    padding-top: 15px;
+                    border-top: 1px solid #ddd;
+                }
+                .bidding-result-footer p {
+                    margin: 5px 0;
+                    color: #666;
+                }
+            `;
+            document.head.appendChild(styleElement);
+        }
+
+        // Create a persistent container for results if it doesn't exist
+        let resultsContainer = document.getElementById('persistent-results-container');
+        if (!resultsContainer) {
+            resultsContainer = document.createElement('div');
+            resultsContainer.id = 'persistent-results-container';
+            const roomDetails = document.getElementById("roomDetails");
+            if (roomDetails) {
+                roomDetails.appendChild(resultsContainer);
+            }
+        }
+
+        // Update the results display
+        resultsContainer.innerHTML = `
+            <div class="bidding-result-container">
+                ${winnerMessage}
+            </div>
+        `;
 
     } catch (error) {
-        console.error("Error storing final bid details:", error);
-        addSystemMessage("Error saving final bid details. Please contact support.");
+        console.error("Error displaying final bid details:", error);
+        addSystemMessage("Error displaying final bid details. Please contact support.");
+        resultsDisplayed = false;
     }
 }
 
