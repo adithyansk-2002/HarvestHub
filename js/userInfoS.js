@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const userInfo = {
                 firstName: document.getElementById('firstName').value,
                 lastName: document.getElementById('lastName').value,
-                gender: document.getElementById('gender').value,
+                gender: document.getElementById('gender').value.charAt(0).toUpperCase() + document.getElementById('gender').value.slice(1).toLowerCase(),
                 phone: document.getElementById('phone').value,
                 addressLine1: document.getElementById('addressLine1').value,
                 addressLine2: document.getElementById('addressLine2').value || '',

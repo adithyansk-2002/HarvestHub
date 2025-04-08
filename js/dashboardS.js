@@ -148,11 +148,14 @@ async function loadBiddingRooms(sellerId) {
                 createdAtFormatted = date.toLocaleString();
             }
 
+            // Capitalize first letter of item name
+            const capitalizedItemName = data.itemName.charAt(0).toUpperCase() + data.itemName.slice(1);
+
             roomsHTML += `
                 <div class="info-item">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <strong>${data.itemName}</strong> - Quantity: ${data.quantity} kg
+                            <strong>${capitalizedItemName}</strong> - Quantity: ${data.quantity} kg
                             <br>
                             <span>Location: ${data.location}</span>
                             <br>
