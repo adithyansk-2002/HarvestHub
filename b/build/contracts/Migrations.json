@@ -689,7 +689,7 @@
   "sourceMap": "61:498:1:-:0;;;341:51;;;;;;;;;-1:-1:-1;366:5:1;:18;;-1:-1:-1;;;;;;366:18:1;374:10;366:18;;;61:498;;;;;;",
   "deployedSourceMap": "61:498:1:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;88:20;;;;;-1:-1:-1;;;;;88:20:1;;;;;;-1:-1:-1;;;;;178:32:3;;;160:51;;148:2;133:18;88:20:1;;;;;;;;115:37;;;;;;;;;368:25:3;;;356:2;341:18;115:37:1;222:177:3;400:156:1;;;;;;:::i;:::-;;:::i;:::-;;;269:5;;-1:-1:-1;;;;;269:5:1;255:10;:19;247:66;;;;-1:-1:-1;;;247:66:1;;791:2:3;247:66:1;;;773:21:3;830:2;810:18;;;803:30;869:34;849:18;;;842:62;-1:-1:-1;;;920:18:3;;;913:32;962:19;;247:66:1;;;;;;;;469:22:::1;:34:::0;;;519:29:::1;::::0;368:25:3;;;519:29:1::1;::::0;356:2:3;341:18;519:29:1::1;;;;;;;400:156:::0;:::o;404:180:3:-;463:6;516:2;504:9;495:7;491:23;487:32;484:52;;;532:1;529;522:12;484:52;-1:-1:-1;555:23:3;;404:180;-1:-1:-1;404:180:3:o",
   "source": "// SPDX-License-Identifier: MIT\r\npragma solidity ^0.8.19;\r\n\r\ncontract Migrations {\r\n    address public owner;\r\n    uint256 public lastCompletedMigration;\r\n\r\n    event MigrationCompleted(uint256 migrationId);\r\n\r\n    modifier onlyOwner() {\r\n        require(msg.sender == owner, \"Only owner can perform this action\");\r\n        _;\r\n    }\r\n\r\n    constructor() {\r\n        owner = msg.sender;\r\n    }\r\n\r\n    function setCompleted(uint256 completed) public onlyOwner {\r\n        lastCompletedMigration = completed;\r\n        emit MigrationCompleted(completed);\r\n    }\r\n}\r\n",
-  "sourcePath": "C:\\Users\\Dan Mody\\OneDrive\\Desktop\\mp\\GitHub\\HarvestHub\\build\\contracts\\Migrations.sol",
+  "sourcePath": "C:\\Users\\Dan Mody\\OneDrive\\Desktop\\mp\\GitHub\\HarvestHub\\b\\contracts\\Migrations.sol",
   "ast": {
     "absolutePath": "project:/contracts/Migrations.sol",
     "exportedSymbols": {
@@ -1274,12 +1274,12 @@
         }
       },
       "links": {},
-      "address": "0x11840cE11BF964Aeb2faF425B10f24A5Fb45c513",
-      "transactionHash": "0x9401b61e3eaecffd2c736cd23647abd13ad7b3508edb8437d06acd27304c52f7"
+      "address": "0x225347C47bF81EC1c8937af9CBfE9e6161F28e30",
+      "transactionHash": "0x66a96f1697bb95b13f1edd8de657122a3a71e44662a6957ce907f6db5f3cfea5"
     }
   },
   "schemaVersion": "3.4.16",
-  "updatedAt": "2025-03-18T16:25:10.636Z",
+  "updatedAt": "2025-04-08T02:15:47.158Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",
