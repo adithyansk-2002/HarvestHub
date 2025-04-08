@@ -3,51 +3,65 @@ pragma solidity ^0.8.19;
 
 contract TransactionLedger {
     struct Transaction {
-        uint256 transactionId;
-        address sender;
-        address receiver;
-        uint256 amount;
         string cropName;
-        string message;
+        uint256 pricePerKg;
+        uint256 quantity;
+        string buyerName;
+        string buyerAddress;
+        string sellerName;
+        string sellerAddress;
+        uint256 totalAmount;
         uint256 timestamp;
     }
 
-    uint256 public transactionCounter;
-    mapping(uint256 => Transaction) private transactions;
+    Transaction[] public transactions;
 
-    event Transfer(
-        uint256 indexed transactionId,
-        address indexed sender,
-        address indexed receiver,
-        uint256 amount,
-        string cropName,
-        string message,
+    function storeTransaction(
+        string memory cropName,
+        uint256 pricePerKg,
+        uint256 quantity,
+        string memory buyerName,
+        string memory buyerAddress,
+        string memory sellerName,
+        string memory sellerAddress,
+        uint256 totalAmount,
         uint256 timestamp
-    );
-
-    constructor() {
-        transactionCounter = 0;
-    }
-
-    function addTransaction(
-        address _receiver,
-        uint256 _amount,
-        string memory _cropName,
-        string memory _message
     ) public {
-        require(_receiver != address(0), "Invalid receiver address");
-        require(_amount > 0, "Amount must be greater than zero");
-
-        transactionCounter++;
-        transactions[transactionCounter] = Transaction(
-            transactionCounter, msg.sender, _receiver, _amount, _cropName, _message, block.timestamp
+        Transaction memory txn = Transaction(
+            cropName,
+            pricePerKg,
+            quantity,
+            buyerName,
+            buyerAddress,
+            sellerName,
+            sellerAddress,
+            totalAmount,
+            timestamp
         );
-
-        emit Transfer(transactionCounter, msg.sender, _receiver, _amount, _cropName, _message, block.timestamp);
+        transactions.push(txn);
     }
 
-    function getTransaction(uint256 _transactionId) public view returns (Transaction memory) {
-        require(_transactionId > 0 && _transactionId <= transactionCounter, "Transaction does not exist");
-        return transactions[_transactionId];
+    function getTransactionCount() public view returns (uint256) {
+        return transactions.length;
+    }
+
+    function getTransaction(uint256 index) public view returns (
+        string memory, uint256, uint256,
+        string memory, string memory,
+        string memory, string memory,
+        uint256, uint256
+    ) {
+        Transaction memory txn = transactions[index];
+        return (
+            txn.cropName,
+            txn.pricePerKg,
+            txn.quantity,
+            txn.buyerName,
+            txn.buyerAddress,
+            txn.sellerName,
+            txn.sellerAddress,
+            txn.totalAmount,
+            txn.timestamp
+        );
     }
 }
