@@ -386,8 +386,8 @@ async function storeFinalBidDetails(roomId) {
 
         // Check if there's a bid higher than the initial price
         if (roomData.highestBid && roomData.highestBid > roomData.initialPrice) {
-            // Calculate final total price
-            const finalTotalPrice = parseFloat(roomData.highestBid) * roomData.quantity;
+            // Use the highest bid directly as the final total price
+            const finalTotalPrice = parseFloat(roomData.highestBid);
 
             // Get buyer details if not anonymous
             let buyerFullName = 'Buyer 1';
@@ -697,7 +697,6 @@ async function predictPrice() {
         return;
     }
 
-    const cropInput = document.getElementById('crop').value.trim().toLowerCase();
     const yearInput = document.getElementById('year').value.trim();
     const resultDiv = document.getElementById('prediction-result');
 
@@ -706,20 +705,30 @@ async function predictPrice() {
 
     try {
         // Validate inputs
-        if (!cropInput || !yearInput) {
-            throw new Error('Please enter both crop name and year.');
+        if (!yearInput) {
+            throw new Error('Please enter a year.');
         }
 
-        // Show loading state
-        resultDiv.innerHTML = '<h3 class="loading">Calculating prediction...</h3>';
+        // Get the crop from the room details
+        const roomDetails = document.getElementById('roomDetails');
+        if (!roomDetails) {
+            throw new Error('Room details not found.');
+        }
 
+        // Get the crop name from the h3 element
+        const cropName = roomDetails.querySelector('h3')?.textContent?.trim().toLowerCase();
+        if (!cropName) {
+            throw new Error('Crop information not found in room details.');
+        }
+
+        // Make the prediction request
         const response = await fetch(`${SERVER_URL}/predict`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                crop: cropInput,
+                crop: cropName,
                 year: parseInt(yearInput)
             })
         });
