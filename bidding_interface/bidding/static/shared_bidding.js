@@ -52,8 +52,9 @@ async function loadBiddingRoom() {
 
 // Display room details
 function displayRoomDetails(room) {
+    const capitalizedItemName = room.itemName.charAt(0).toUpperCase() + room.itemName.slice(1);
     const detailsHtml = `
-        <h3>${room.itemName}</h3>
+        <h3>${capitalizedItemName}</h3>
         <p><strong>Quantity:</strong> ${room.quantity} kg</p>
         <p><strong>Location:</strong> ${room.location}</p>
         <p><strong>Current Highest Bid:</strong> ₹${room.highestBid || 0}</p>

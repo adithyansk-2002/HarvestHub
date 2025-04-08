@@ -168,8 +168,9 @@ function updateBidDisplay(data) {
     const roomDetails = document.getElementById("roomDetails");
     if (!roomDetails) return;
 
+    const capitalizedItemName = data.itemName ? data.itemName.charAt(0).toUpperCase() + data.itemName.slice(1) : 'Unknown Item';
     let displayHTML = `
-        <h3>${data.itemName || 'Unknown Item'}</h3>
+        <h3>${capitalizedItemName}</h3>
         <p><strong>Quantity:</strong> ${data.quantity || 0} kg</p>
         <p><strong>Location:</strong> ${data.location || 'Unknown'}</p>
     `;

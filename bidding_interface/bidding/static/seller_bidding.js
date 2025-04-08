@@ -5,10 +5,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Handle price prediction
 async function predictPrice() {
-    const cropInput = document.getElementById('crop').value.trim().toLowerCase();
     const yearInput = document.getElementById('year').value.trim();
     
     try {
+        // Get the current room data to access the crop name
+        const roomRef = db.collection("biddingRooms").doc(window.sharedBidding.currentRoomId());
+        const roomSnap = await roomRef.get();
+        const roomData = roomSnap.data();
+        
+        if (!roomData) {
+            throw new Error("Room data not found");
+        }
+
+        const cropInput = roomData.itemName.toLowerCase();
+        
         const response = await fetch(`${SERVER_URL}/predict`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -22,7 +32,6 @@ async function predictPrice() {
         }
 
         // Update room with initial price
-        const roomRef = db.collection("biddingRooms").doc(window.sharedBidding.currentRoomId());
         await roomRef.update({
             initialPrice: data.predicted_price,
             biddingStarted: true,
