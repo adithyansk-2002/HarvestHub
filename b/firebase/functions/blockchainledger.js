@@ -15,12 +15,12 @@ async function writeToBlockchain(data) {
   await ledger.methods
     .storeTransaction(
       data.cropName,
-      parseInt(data.pricePerKg),
+      parseInt(data.totalAmount / data.quantity), // Calculate price per kg
       parseInt(data.quantity),
-      data.buyer.name,
-      data.buyer.address,
-      data.seller.name,
-      data.seller.address,
+      data.buyerName,
+      data.buyerAddress,
+      data.sellerName,
+      data.sellerAddress,
       parseInt(data.totalAmount),
       Math.floor(Date.now() / 1000)
     )
