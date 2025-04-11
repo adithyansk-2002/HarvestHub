@@ -155,6 +155,14 @@ HarvestHub is a web-based platform that connects farmers and buyers through an e
    - Safari
    - Edge
 
+6. **Ganache Setup**
+   - Download and install Ganache from [Ganache's official website](https://trufflesuite.com/ganache/)
+   - After installation, launch Ganache
+   - Create a new workspace or use the default one
+   - Note down the RPC Server URL (usually http://127.0.0.1:7545)
+   - Keep track of the private keys of the accounts for testing purposes
+   - Make sure Ganache is running when testing the blockchain features of the application
+
 ### Installation
 
 1. **Clone the Repository**
@@ -284,11 +292,54 @@ HarvestHub/
 │   └── service-worker.js # PWA service worker
 ├── lib/                   # Third-party libraries
 ├── scss/                  # SCSS source files
-└── index.html            # Main entry point
+├── functions/            # Firebase Cloud Functions
+├── test/                 # Test files and test suites
+├── Temp/                 # Temporary files
+├── b/                    # Build directory
+├── .firebaserc          # Firebase project configuration
+├── firebase.json        # Firebase deployment configuration
+├── manifest.json        # PWA manifest file
+├── package.json         # Node.js dependencies
+├── package-lock.json    # Node.js dependencies lock file
+├── .gitignore          # Git ignore rules
+├── LICENSE             # MIT License
+├── index.html          # Main entry point
+├── about.html          # About page
+├── buyers.html         # Buyers page
+├── category.html       # Category listing page
+├── contact.html        # Contact page
+├── dashboardB.html     # Buyer dashboard
+├── dashboardS.html     # Seller dashboard
+├── login.html          # Login page
+├── loginB.html         # Buyer login page
+├── loginS.html         # Seller login page
+├── sellers.html        # Sellers page
+├── signup.html         # Signup page
+├── signupB.html        # Buyer signup page
+├── signupS.html        # Seller signup page
+├── testimonial.html    # Testimonials page
+├── userInfoB.html      # Buyer profile page
+└── userInfoS.html      # Seller profile page
 ```
+
+## Configuration Files
+
+### Firebase Configuration
+- `.firebaserc`: Contains Firebase project configuration
+- `firebase.json`: Contains Firebase deployment and hosting rules
+- `functions/`: Contains Firebase Cloud Functions for backend operations
+
+### PWA Configuration
+- `manifest.json`: Contains Progressive Web App configuration
+- `service-worker.js`: Handles offline functionality and caching
+
+### Package Management
+- `package.json`: Lists all Node.js dependencies and scripts
+- `package-lock.json`: Locks dependency versions
 
 ## Key Dependencies
 
+### Frontend
 - Firebase (Authentication, Database)
 - Bootstrap 5
 - jQuery
@@ -296,6 +347,19 @@ HarvestHub/
 - Font Awesome
 - Web3.js
 - Truffle HDWallet Provider
+
+### Backend
+- Firebase Admin SDK
+- Firebase Functions
+- Express.js
+- CORS
+- Body-parser
+
+### Development
+- Babel
+- ESLint
+- Prettier
+- Jest (for testing)
 
 ## Usage
 
